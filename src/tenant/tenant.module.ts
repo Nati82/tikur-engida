@@ -16,10 +16,10 @@ import { TenantService } from './tenant.service';
         const user = req.body['username']
           ? req.body['username']
           : req.user['username'];
-        await fs.promises.mkdir(`./files/${user}/profile`, {
+        await fs.promises.mkdir(`./files/tenant/${user}/profile`, {
           recursive: true,
         });
-        cb(null, `./files/${user}/profile`);
+        cb(null, `./files/tenant/${user}/profile`);
       },
       filename: (_req, file, cb) => {
         cb(null, file.originalname);
