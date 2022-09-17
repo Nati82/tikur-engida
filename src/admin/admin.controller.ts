@@ -8,6 +8,7 @@ import {
   Patch,
   ClassSerializerInterceptor,
   UseInterceptors,
+  Delete,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
@@ -15,9 +16,9 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from 'src/common/roles.enum';
 import { AdminService } from './admin.service';
-import { ChangePassAdminDTO } from './dtos/changePassAdmin.dto';
-import { CreateAdminDTO } from './dtos/createAdmin.dto';
-import { UpdateAdminDTO } from './dtos/updateAdmin.dto';
+import { ChangePasswordDTO } from '../common/dtos/change-password.dto';
+import { CreateAdminDTO } from './dtos/create-admin.dto';
+import { UpdateAdminDTO } from './dtos/update-admin.dto';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -53,7 +54,7 @@ export class AdminController {
   @Patch('changePassAdmin')
   async changePassAdmin(
     @Request() req,
-    @Body() changePassAdmin: ChangePassAdminDTO,
+    @Body() changePassAdmin: ChangePasswordDTO,
   ) {
     const { user } = req;
     return this.adminService.changePassAdmin(user.id, changePassAdmin.password);
@@ -61,7 +62,7 @@ export class AdminController {
 
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('deleteAdmin')
+  @Delete('deleteAdmin')
   async deleteAdmin(@Request() req) {
     const { user } = req;
     return this.adminService.deleteAdmin(user.id);

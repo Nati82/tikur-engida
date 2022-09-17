@@ -28,8 +28,7 @@ export class AdminService {
   }
 
   async createAdmin(newAdmin: Partial<Admin>) {
-    const saltOrRounds = 10;
-    newAdmin.password = await bcrypt.hash(newAdmin.password, saltOrRounds);
+    newAdmin.password = await bcrypt.hash(newAdmin.password, 10);
 
     const tempAdmin = this.AdminRepository.create(newAdmin);
     const admin = await this.AdminRepository.save(tempAdmin);
