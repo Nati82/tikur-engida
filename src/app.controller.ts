@@ -10,14 +10,4 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-
-  @Get(`new`)
-  getNew(): string {
-    return `new hello`;
-  }
-
-  @Post()
-  postHello(@Body() hello: string): string {
-    return hello;
-  }
 }
