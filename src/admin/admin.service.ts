@@ -3,16 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { Admin } from './entities/Admin.entity';
+import { Admin } from './entities/admin.entity';
 
 @Injectable()
 export class AdminService {
   constructor(
-    @InjectRepository(Admin) private AdminRepository: Repository<Admin>,
+    @InjectRepository(Admin) private adminRepository: Repository<Admin>,
   ) {}
 
   async findAdminByUname(username: string) {
-    return this.AdminRepository.findOne({
+    return this.adminRepository.findOne({
       where: {
         username,
       },
@@ -20,7 +20,7 @@ export class AdminService {
   }
 
   async findAdminById(id: string) {
-    return this.AdminRepository.findOne({
+    return this.adminRepository.findOne({
         where: {
             Id: id
         }
@@ -28,10 +28,15 @@ export class AdminService {
   }
 
   async createAdmin(newAdmin: Partial<Admin>) {
+    const adminExists = await this.findAdminByUname(newAdmin.username);
+
+    if(adminExists) {
+      throw new BadRequestException({ message: 'username already exist' });
+    }
     newAdmin.password = await bcrypt.hash(newAdmin.password, 10);
 
-    const tempAdmin = this.AdminRepository.create(newAdmin);
-    const admin = await this.AdminRepository.save(tempAdmin);
+    const tempAdmin = this.adminRepository.create(newAdmin);
+    const admin = await this.adminRepository.save(tempAdmin);
 
     if (admin) {
       return admin;
@@ -41,7 +46,7 @@ export class AdminService {
   }
 
   async updateAdmin(id: string, adminParams: Partial<Admin>) {
-    const { affected } = await this.AdminRepository.createQueryBuilder('admins')
+    const { affected } = await this.adminRepository.createQueryBuilder('admins')
       .update()
       .set({
         ...adminParams,
@@ -50,7 +55,7 @@ export class AdminService {
       .execute();
 
     if (affected !== 0) {
-      return this.AdminRepository.findOne({
+      return this.adminRepository.findOne({
         where: {
           Id: id,
         },
@@ -63,7 +68,7 @@ export class AdminService {
   async changePassAdmin(id: string, newPassword: string) {
     newPassword = await bcrypt.hash(newPassword, 10);
 
-    const { affected } = await this.AdminRepository.createQueryBuilder('admins')
+    const { affected } = await this.adminRepository.createQueryBuilder('admins')
       .update()
       .set({
         password: newPassword,
@@ -72,7 +77,7 @@ export class AdminService {
       .execute();
 
     if (affected !== 0) {
-      return this.AdminRepository.findOne({
+      return this.adminRepository.findOne({
         where: {
           Id: id,
         },
@@ -83,7 +88,7 @@ export class AdminService {
   }
 
   async deleteAdmin(id: string) {
-    const { affected } = await this.AdminRepository.delete(id);
+    const { affected } = await this.adminRepository.delete(id);
     if (affected && affected > 0) {
       return { message: 'admin deleted successfuly' };
     }

@@ -9,15 +9,15 @@ import { Tenant } from './entities/tenat.entity';
 @Injectable()
 export class TenantService {
   constructor(
-    @InjectRepository(Tenant) private TenantRepository: Repository<Tenant>,
+    @InjectRepository(Tenant) private tenantRepository: Repository<Tenant>,
   ) {}
 
   async findTenantById(id: string) {
-    return this.TenantRepository.findOne({ where: { Id: id } });
+    return this.tenantRepository.findOne({ where: { Id: id } });
   }
 
   async findTenantByUname(username: string) {
-    return this.TenantRepository.findOne({ where: { username } });
+    return this.tenantRepository.findOne({ where: { username } });
   }
 
   async createTenant(
@@ -40,8 +40,8 @@ export class TenantService {
     newTenant.password = await bcrypt.hash(newTenant.password, 10);
     newTenant.profilePic = `${file.destination}/${file.filename}`;
 
-    const tempTenant = this.TenantRepository.create(newTenant);
-    const tenant = await this.TenantRepository.save(tempTenant);
+    const tempTenant = this.tenantRepository.create(newTenant);
+    const tenant = await this.tenantRepository.save(tempTenant);
 
     if (tenant) {
       return tenant;
@@ -56,7 +56,7 @@ export class TenantService {
   }
 
   async updateTenant(id: string, tenantParams: Partial<Tenant>) {
-    const { affected } = await this.TenantRepository.createQueryBuilder(
+    const { affected } = await this.tenantRepository.createQueryBuilder(
       'tenants',
     )
       .update()
@@ -67,7 +67,7 @@ export class TenantService {
       .execute();
 
     if (affected !== 0) {
-      return this.TenantRepository.findOne({
+      return this.tenantRepository.findOne({
         where: {
           Id: id,
         },
@@ -80,7 +80,7 @@ export class TenantService {
   async changePassTenant(id: string, newPassword: string) {
     newPassword = await bcrypt.hash(newPassword, 10);
 
-    const { affected } = await this.TenantRepository.createQueryBuilder(
+    const { affected } = await this.tenantRepository.createQueryBuilder(
       'renters',
     )
       .update()
@@ -91,7 +91,7 @@ export class TenantService {
       .execute();
 
     if (affected !== 0) {
-      return this.TenantRepository.findOne({
+      return this.tenantRepository.findOne({
         where: {
           Id: id,
         },
@@ -102,7 +102,7 @@ export class TenantService {
   }
 
   async deleteTenant(id: string) {
-    const { affected } = await this.TenantRepository.delete(id);
+    const { affected } = await this.tenantRepository.delete(id);
     if (affected && affected > 0) {
       return { message: 'delete successfuly' };
     }

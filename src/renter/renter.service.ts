@@ -9,15 +9,15 @@ import { Renter } from './entities/renter.entity';
 @Injectable()
 export class RenterService {
   constructor(
-    @InjectRepository(Renter) private RenterRepository: Repository<Renter>,
+    @InjectRepository(Renter) private renterRepository: Repository<Renter>,
   ) {}
 
   async findRenterById(id: string) {
-    return this.RenterRepository.findOne({ where: { Id: id } });
+    return this.renterRepository.findOne({ where: { Id: id } });
   }
 
   async findRenterByUname(username: string) {
-    return this.RenterRepository.findOne({ where: { username } });
+    return this.renterRepository.findOne({ where: { username } });
   }
 
   async createRenter(
@@ -40,8 +40,8 @@ export class RenterService {
     newRenter.password = await bcrypt.hash(newRenter.password, 10);
     newRenter.profilePic = `${file.destination}/${file.filename}`;
 
-    const tempRenter = this.RenterRepository.create(newRenter);
-    const renter = await this.RenterRepository.save(tempRenter);
+    const tempRenter = this.renterRepository.create(newRenter);
+    const renter = await this.renterRepository.save(tempRenter);
 
     if (renter) {
       return renter;
@@ -56,7 +56,7 @@ export class RenterService {
   }
 
   async updateRenter(id: string, renterParams: Partial<Renter>) {
-    const { affected } = await this.RenterRepository.createQueryBuilder(
+    const { affected } = await this.renterRepository.createQueryBuilder(
       'renters',
     )
       .update()
@@ -67,7 +67,7 @@ export class RenterService {
       .execute();
 
     if (affected !== 0) {
-      return this.RenterRepository.findOne({
+      return this.renterRepository.findOne({
         where: {
           Id: id,
         },
@@ -80,7 +80,7 @@ export class RenterService {
   async changePassRenter(id: string, newPassword: string) {
     newPassword = await bcrypt.hash(newPassword, 10);
 
-    const { affected } = await this.RenterRepository.createQueryBuilder(
+    const { affected } = await this.renterRepository.createQueryBuilder(
       'renters',
     )
       .update()
@@ -91,7 +91,7 @@ export class RenterService {
       .execute();
 
     if (affected !== 0) {
-      return this.RenterRepository.findOne({
+      return this.renterRepository.findOne({
         where: {
           Id: id,
         },
@@ -102,7 +102,7 @@ export class RenterService {
   }
 
   async deleteRenter(id: string) {
-    const { affected } = await this.RenterRepository.delete(id);
+    const { affected } = await this.renterRepository.delete(id);
     if (affected && affected > 0) {
       return { message: 'delete successfuly' };
     }

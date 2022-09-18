@@ -36,9 +36,4 @@ export class UpdateUserDTO {
   @IsOptional()
   @IsString()
   profilePic: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  status: boolean;
 }

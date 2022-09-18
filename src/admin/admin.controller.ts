@@ -19,13 +19,15 @@ import { AdminService } from './admin.service';
 import { ChangePasswordDTO } from '../common/dtos/change-password.dto';
 import { CreateAdminDTO } from './dtos/create-admin.dto';
 import { UpdateAdminDTO } from './dtos/update-admin.dto';
+import { RenterService } from 'src/renter/renter.service';
+import { UpdateRenterDTO } from './dtos/update-renter.dto';
 
 @ApiTags('admin')
 @ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private renterService: RenterService) {}
 
   @ApiBody({ type: CreateAdminDTO })
   @Post('signup')
@@ -66,5 +68,26 @@ export class AdminController {
   async deleteAdmin(@Request() req) {
     const { user } = req;
     return this.adminService.deleteAdmin(user.id);
+  }
+
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('approveRenter')
+  async approveRenter(@Body() renter: UpdateRenterDTO) {
+    return this.renterService.updateRenter(renter.Id, renter)
+  }
+
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('updateRenter')
+  async updateRenter(@Body() renter: UpdateRenterDTO) {
+    return this.renterService.updateRenter(renter.Id, renter)
+  }
+
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('removeRenter')
+  async removeRenter(@Body() renter: UpdateRenterDTO) {
+    return this.renterService.deleteRenter(renter.Id)
   }
 }

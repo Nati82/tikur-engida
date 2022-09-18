@@ -7,7 +7,7 @@ import { AdminModule } from './admin/admin.module';
 import { MessageModule } from './message/message.module';
 import { RoomModule } from './room/room.module';
 import { AuthModule } from './auth/auth.module';
-import { Admin } from './admin/entities/Admin.entity';
+import { Admin } from './admin/entities/admin.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Renter } from './renter/entities/renter.entity';
 import { Tenant } from './tenant/entities/tenat.entity';
