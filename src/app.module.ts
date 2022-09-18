@@ -11,6 +11,9 @@ import { Admin } from './admin/entities/admin.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Renter } from './renter/entities/renter.entity';
 import { Tenant } from './tenant/entities/tenat.entity';
+import { Room } from './room/entities/room.entity';
+import { Booking } from './room/entities/booking.entity';
+import { Comment } from './room/entities/comment.entity';
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { Tenant } from './tenant/entities/tenat.entity';
       username: 'Tikur-Engida',
       password: 'Tikur',
       database: 'TikurEngida',
-      entities: [Admin, Renter, Tenant],
+      entities: [Admin, Renter, Tenant, Room, Booking, Comment],
       synchronize: true,
     }),
     RenterModule,

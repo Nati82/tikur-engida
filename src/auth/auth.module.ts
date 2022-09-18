@@ -13,6 +13,7 @@ import { LocalStrategyRenter } from './strategies/local-renter.strategy';
 import { JwtStrategyRenter } from './strategies/jwt-renter.strategy';
 import { TenantModule } from 'src/tenant/tenant.module';
 import { LocalStrategyTenant } from './strategies/local-tenant.strategy';
+import { JwtAuthGuardJoined } from './guards/jwt-auth-joined.guard';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { LocalStrategyTenant } from './strategies/local-tenant.strategy';
     LocalStrategyRenter,
     LocalStrategyTenant,
     JwtStrategy,
-    JwtStrategyRenter
+    JwtStrategyRenter,
+    JwtAuthGuardJoined
   ],
   controllers: [AuthController],
 })

@@ -13,8 +13,9 @@ export class Booking {
     @Column({type: 'date'})
     to: Date;
 
-    @Column({type: 'date'})
+    @Column({type: 'date', default: new Date(Date.now()).toISOString()})
     date: Date;
+
     @OneToOne(() => Room)
     @JoinColumn()
     roomId: string;

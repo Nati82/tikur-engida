@@ -6,7 +6,7 @@ export class Room {
     @PrimaryGeneratedColumn("uuid")
     Id: string;
 
-    @Column({type: 'array'})
+    @Column({type: 'int', array: true})
     pictures: string[];
 
     @Column({type: 'varchar'})
@@ -26,10 +26,7 @@ export class Room {
     price: string;
 
     @Column({type: 'int'})
-    beds: number;
-
-    @Column({type: 'int'})
-    size: number;
+    rooms: number;
 
     @Column({type: 'varchar'})
     description: string;
