@@ -9,8 +9,9 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   Delete,
+  Param,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -72,22 +73,17 @@ export class AdminController {
 
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('approveRenter')
-  async approveRenter(@Body() renter: UpdateRenterDTO) {
-    return this.renterService.updateRenter(renter.Id, renter)
+  @ApiParam({name: 'renterId'})
+  @Patch('approveRenter/:renterId')
+  async approveRenter(@Param('renterId') renterId: string, @Body() renter: UpdateRenterDTO) {
+    return this.renterService.updateRenter(renterId, renter)
   }
 
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('updateRenter')
-  async updateRenter(@Body() renter: UpdateRenterDTO) {
-    return this.renterService.updateRenter(renter.Id, renter)
-  }
-
-  @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('removeRenter')
-  async removeRenter(@Body() renter: UpdateRenterDTO) {
-    return this.renterService.deleteRenter(renter.Id)
+  @ApiParam({name: 'renterId'})
+  @Patch('removeRenter/:renterId')
+  async removeRenter(@Param('renterId') renterId: string) {
+    return this.renterService.deleteRenter(renterId)
   }
 }

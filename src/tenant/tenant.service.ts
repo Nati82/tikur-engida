@@ -47,7 +47,7 @@ export class TenantService {
       return tenant;
     }
 
-    await fs.promises.rm(`./files/${tenant.username}/profile`, {
+    await fs.promises.rm(`./files/${tenant.username}/profile/${file.filename}`, {
       recursive: true,
       force: true,
     });
@@ -56,14 +56,12 @@ export class TenantService {
   }
 
   async updateTenant(id: string, tenantParams: Partial<Tenant>) {
-    const { affected } = await this.tenantRepository.createQueryBuilder(
-      'tenants',
-    )
-      .update()
+    const { affected } = await this.tenantRepository.createQueryBuilder()
+      .update(Tenant)
       .set({
         ...tenantParams,
       })
-      .where('tenants.id = :id', { id })
+      .where('Id = :id', { id })
       .execute();
 
     if (affected !== 0) {
@@ -80,14 +78,12 @@ export class TenantService {
   async changePassTenant(id: string, newPassword: string) {
     newPassword = await bcrypt.hash(newPassword, 10);
 
-    const { affected } = await this.tenantRepository.createQueryBuilder(
-      'renters',
-    )
-      .update()
+    const { affected } = await this.tenantRepository.createQueryBuilder()
+      .update(Tenant)
       .set({
         password: newPassword,
       })
-      .where('renters.id = :id', { id })
+      .where('Id = :id', { id })
       .execute();
 
     if (affected !== 0) {

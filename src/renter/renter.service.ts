@@ -12,6 +12,9 @@ export class RenterService {
     @InjectRepository(Renter) private renterRepository: Repository<Renter>,
   ) {}
 
+  async getAllRenters() {
+    return this.renterRepository.find();
+  }
   async findRenterById(id: string) {
     return this.renterRepository.findOne({ where: { Id: id } });
   }
@@ -47,7 +50,7 @@ export class RenterService {
       return renter;
     }
 
-    await fs.promises.rm(`./files/${renter.username}/profile`, {
+    await fs.promises.rm(`./files/${renter.username}/profile/${file.filename}`, {
       recursive: true,
       force: true,
     });
@@ -56,16 +59,14 @@ export class RenterService {
   }
 
   async updateRenter(id: string, renterParams: Partial<Renter>) {
-    const { affected } = await this.renterRepository.createQueryBuilder(
-      'renters',
-    )
-      .update()
+    const { affected } = await this.renterRepository.createQueryBuilder()
+      .update(Renter)
       .set({
-        ...renterParams,
+        status: renterParams.status,
       })
-      .where('renters.id = :id', { id })
+      .where('Id = :id', { id })
       .execute();
-
+      
     if (affected !== 0) {
       return this.renterRepository.findOne({
         where: {
@@ -80,14 +81,12 @@ export class RenterService {
   async changePassRenter(id: string, newPassword: string) {
     newPassword = await bcrypt.hash(newPassword, 10);
 
-    const { affected } = await this.renterRepository.createQueryBuilder(
-      'renters',
-    )
-      .update()
+    const { affected } = await this.renterRepository.createQueryBuilder()
+      .update(Renter)
       .set({
         password: newPassword,
       })
-      .where('renters.id = :id', { id })
+      .where('Id = :id', { id })
       .execute();
 
     if (affected !== 0) {

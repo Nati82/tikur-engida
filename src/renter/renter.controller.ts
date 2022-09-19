@@ -14,6 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuardJoined } from 'src/auth/guards/jwt-auth-joined.guard';
 import { JwtAuthGuardRenter } from 'src/auth/guards/jwt-auth-renter.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ChangePasswordDTO } from 'src/common/dtos/change-password.dto';
@@ -37,6 +38,13 @@ export class RenterController {
     const { fileValidationError } = req;
 
     return this.renterService.createRenter(renter, file, fileValidationError);
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
+  @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @Get('getAllRentes')
+  getAllRenters() {
+    return this.renterService.getAllRenters();
   }
 
   @Roles(Role.RENTER)

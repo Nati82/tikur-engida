@@ -13,7 +13,7 @@ export class Booking {
     @Column({type: 'date'})
     to: Date;
 
-    @Column({type: 'date', default: new Date(Date.now()).toISOString()})
+    @Column({type: 'date', default: new Date()})
     date: Date;
 
     @OneToOne(() => Room)

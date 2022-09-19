@@ -5,21 +5,24 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { AddRoomDTO } from 'src/room/dtos/add-room.dto';
 import { Role } from 'src/common/roles.enum';
 import { RoomService } from './room.service';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuardJoined } from 'src/auth/guards/jwt-auth-joined.guard';
 import { UpdateRoomDTO } from './dtos/update-room.dto';
 import { AddCommentDTO } from './dtos/add-comment.dto';
 import { RequestBookingDTO } from './dtos/request-booking.dto';
+import { ApproveRoomDTO } from './dtos/approve-room.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('room')
+@ApiBearerAuth()
 @Controller('room')
 export class RoomController {
   constructor(private roomService: RoomService) {}
 
   @Roles(Role.RENTER)
   @UseGuards(JwtAuthGuardRenter, RolesGuard)
-  @UseInterceptors(FilesInterceptor('profilePic'))
+  @UseInterceptors(FilesInterceptor('pictures'))
   @ApiConsumes('multipart/form-data')
   @Post('postRoom')
   async postRoom(@Request() req: any, @UploadedFiles() files: Array<Express.Multer.File>, @Body() room: AddRoomDTO) {
@@ -36,63 +39,81 @@ export class RoomController {
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'roomId'})
   @Get('viewRooms/:roomId')
-  async viewRoom(@Param() roomId: string) {
+  async viewRoom(@Param('roomId') roomId: string) {
     return this.roomService.viewRoom(roomId);
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'renterId'})
   @Get('viewRoomsByRenter/:renterId')
-  async viewRoomByRenter(@Param() renterId: string) {
+  async viewRoomByRenter(@Param('renterId') renterId: string) {
     return this.roomService.viewRoomByRenter(renterId);
   }
 
-  @Roles(Role.ADMIN, Role.RENTER)
-  @UseGuards(JwtAuthGuardJoined, RolesGuard)
-  @Patch('updateRoom/:roomId')
-  async updateRoom(@Param() roomId: string, @Body() roomParams : UpdateRoomDTO) {
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiParam({name: 'roomId'})
+  @Patch('approveRoom/:roomId')
+  async approveRoom(@Param('roomId') roomId: string, @Body() roomParams : ApproveRoomDTO) {
     return this.roomService.updateRoom(roomId, roomParams);
   }
 
   @Roles(Role.ADMIN, Role.RENTER)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'roomId'})
+  @Patch('updateRoom/:roomId')
+  async updateRoom(@Param('roomId') roomId: string, @Body() roomParams : UpdateRoomDTO) {
+    return this.roomService.updateRoom(roomId, roomParams);
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER)
+  @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'roomId'})
   @Delete('deleteRoom/:roomId')
-  async deleteRoom(@Param() roomId: string) {
+  async deleteRoom(@Param('roomId') roomId: string) {
     return this.roomService.deleteRoom(roomId);
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'roomId'})
   @Get('viewComment/:roomId')
-  async viewComment(@Param() roomId: string,) {
+  async viewComment(@Param('roomId') roomId: string,) {
     return this.roomService.viewComment(roomId);
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
-  @Post('addComment/:roomId')
+  @ApiParam({name: 'roomId'})
+  @Post('addComment')
   async addComment(@Body() comment : AddCommentDTO) {
     return this.roomService.addComment(comment);
   }
 
   @Roles(Role.ADMIN, Role.TENANT, Role.RENTER)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'roomId'})
   @Get('viewBookingRequest/:roomId')
-  async viewBookingRequest(@Param() roomId: string) {
+  async viewBookingRequest(@Param('roomId') roomId: string) {
     return this.roomService.viewBookingRequest(roomId);
   }
 
   @Roles(Role.ADMIN, Role.RENTER)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
-  @Patch('acceptBookingRequest/:roomId')
-  async acceptBookingRequest(@Param() roomId: string) {
-    return this.roomService.acceptBookingRequest(roomId);
+  @ApiParam({name: 'roomId'})
+  @ApiParam({name: 'bookingReqId'})
+  @Patch('acceptBookingRequest/:roomId/:bookingReqId')
+  async acceptBookingRequest(@Param('roomId') roomId: string, @Param('bookingReqId') bookingReqId: string) {
+    return this.roomService.acceptBookingRequest(roomId, bookingReqId);
   }
 
   @Roles(Role.ADMIN, Role.TENANT, Role.RENTER)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
-  @Post('addBookingRequest/:roomId')
+  @ApiParam({name: 'roomId'})
+  @Post('addBookingRequest')
   async addBookingRequest(@Body() booking: RequestBookingDTO) {
     return this.roomService.addBookingRequest(booking);
   }

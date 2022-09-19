@@ -46,12 +46,12 @@ export class AdminService {
   }
 
   async updateAdmin(id: string, adminParams: Partial<Admin>) {
-    const { affected } = await this.adminRepository.createQueryBuilder('admins')
-      .update()
+    const { affected } = await this.adminRepository.createQueryBuilder()
+      .update(Admin)
       .set({
         ...adminParams,
       })
-      .where('admins.id = :id', { id })
+      .where('Id = :id', { id })
       .execute();
 
     if (affected !== 0) {
@@ -68,12 +68,12 @@ export class AdminService {
   async changePassAdmin(id: string, newPassword: string) {
     newPassword = await bcrypt.hash(newPassword, 10);
 
-    const { affected } = await this.adminRepository.createQueryBuilder('admins')
-      .update()
+    const { affected } = await this.adminRepository.createQueryBuilder()
+      .update(Admin)
       .set({
         password: newPassword,
       })
-      .where('admins.id = :id', { id })
+      .where('Id = :id', { id })
       .execute();
 
     if (affected !== 0) {

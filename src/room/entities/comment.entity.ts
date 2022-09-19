@@ -18,6 +18,6 @@ export class Comment {
     @Column({type: 'varchar'})
     comment: string;
 
-    @Column({type: 'date', default: new Date(Date.now()).toISOString()})
+    @Column({type: 'date', default: new Date()})
     date: Date;
 }

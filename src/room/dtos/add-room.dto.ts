@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsInt, IsNumber, IsNumberString, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class AddRoomDTO {
   @ApiProperty()
@@ -19,7 +19,7 @@ export class AddRoomDTO {
   description: string;
 
   @ApiProperty()
-  @IsNumber()
+  @IsNumberString()
   rooms: number;
 
   @ApiProperty()

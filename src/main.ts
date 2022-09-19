@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
   DocumentBuilder,
@@ -31,7 +31,7 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization',
     methods: 'GET, POST, PATCH, DELETE, OPTIONS',
   });
-
+  
   await app.listen(4001);
 }
 bootstrap();

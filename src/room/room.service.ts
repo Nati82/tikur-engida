@@ -46,7 +46,10 @@ export class RoomService {
         message: fileValidationError,
       });
     }
-    files.map((f) => newRoom.pictures.push(`${f.destination}/${f.filename}`));
+    newRoom.pictures = new Array();
+    files.forEach((f) =>
+      newRoom.pictures.push(`${f.destination}/${f.filename}`),
+    );
 
     const tempRoom = this.roomRepository.create(newRoom);
     const room = await this.roomRepository.save(tempRoom);
@@ -55,22 +58,24 @@ export class RoomService {
       return room;
     }
 
-    await fs.promises.rm(`./files/renter/${username}/rooms`, {
-      recursive: true,
-      force: true,
-    });
+    for await (const f of files) {
+      await fs.promises.rm(`./files/renter/${username}/rooms/${f.filename}`, {
+        recursive: true,
+        force: true,
+      });
+    }
 
     throw new BadRequestException({ message: 'add room unsuccessful' });
   }
 
   async updateRoom(id: string, roomParams: Partial<Room>) {
     const { affected } = await this.roomRepository
-      .createQueryBuilder('rooms')
-      .update()
+      .createQueryBuilder()
+      .update(Room)
       .set({
         ...roomParams,
       })
-      .where('rooms.id = :id', { id })
+      .where('Id = :id', { id })
       .execute();
 
     if (affected !== 0) {
@@ -129,8 +134,9 @@ export class RoomService {
     });
   }
 
-  async acceptBookingRequest(roomId: string) {
+  async acceptBookingRequest(roomId: string, bookingReqId: string) {
     const roomExists = await this.viewRoom(roomId);
+    const bookingReqIdExists = await this.bookingRepository.findOne({ where: { Id: bookingReqId }});
 
     if (!roomExists) {
       throw new BadRequestException({
@@ -139,12 +145,14 @@ export class RoomService {
     }
 
     const { affected } = await this.roomRepository
-      .createQueryBuilder('rooms')
-      .update()
+      .createQueryBuilder()
+      .update(Room)
       .set({
         reserved: true,
+        from: bookingReqIdExists.from,
+        to: bookingReqIdExists.to
       })
-      .where('rooms.id = :roomId', { roomId })
+      .where('Id = :roomId', { roomId })
       .execute();
 
     if (affected && affected > 0) {
