@@ -14,6 +14,7 @@ import { Tenant } from './tenant/entities/tenat.entity';
 import { Room } from './room/entities/room.entity';
 import { Booking } from './room/entities/booking.entity';
 import { Comment } from './room/entities/comment.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { Comment } from './room/entities/comment.entity';
       entities: [Admin, Renter, Tenant, Room, Booking, Comment],
       synchronize: true,
     }),
+    ScheduleModule.forRoot(),
     RenterModule,
     TenantModule,
     AdminModule,

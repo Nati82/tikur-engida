@@ -12,6 +12,9 @@ export class TenantService {
     @InjectRepository(Tenant) private tenantRepository: Repository<Tenant>,
   ) {}
 
+  async getAllTenants() {
+    return this.tenantRepository.find();
+  }
   async findTenantById(id: string) {
     return this.tenantRepository.findOne({ where: { Id: id } });
   }

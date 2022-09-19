@@ -10,12 +10,14 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuardJoined } from 'src/auth/guards/jwt-auth-joined.guard';
 import { JwtAuthGuardRenter } from 'src/auth/guards/jwt-auth-renter.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ChangePasswordDTO } from 'src/common/dtos/change-password.dto';
 import { CreateUserDTO } from 'src/common/dtos/create-user.dto';
@@ -74,11 +76,19 @@ export class RenterController {
     return this.renterService.changePassRenter(user.id, changePassword.password);
   }
 
-  @Roles(Role.TENANT)
+  @Roles(Role.RENTER)
   @UseGuards(JwtAuthGuardRenter, RolesGuard)
   @Delete('deleteRenter')
   async deleteAdmin(@Request() req) {
     const { user } = req;
     return this.renterService.deleteRenter(user.id);
+  }
+
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiParam({name: 'renterId'})
+  @Delete('deleteRenterAdmin')
+  async deleteTenantAdmin(@Param('renterId') renterId: string) {
+    return this.renterService.deleteRenter(renterId);
   }
 }
