@@ -21,7 +21,7 @@ import { ChangePasswordDTO } from '../common/dtos/change-password.dto';
 import { CreateAdminDTO } from './dtos/create-admin.dto';
 import { UpdateAdminDTO } from './dtos/update-admin.dto';
 import { RenterService } from 'src/renter/renter.service';
-import { UpdateRenterDTO } from './dtos/update-renter.dto';
+import { UpdateRenterDTO } from '../renter/dtos/update-renter.dto';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -69,21 +69,5 @@ export class AdminController {
   async deleteAdmin(@Request() req) {
     const { user } = req;
     return this.adminService.deleteAdmin(user.id);
-  }
-
-  @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiParam({name: 'renterId'})
-  @Patch('approveRenter/:renterId')
-  async approveRenter(@Param('renterId') renterId: string, @Body() renter: UpdateRenterDTO) {
-    return this.renterService.updateRenter(renterId, renter)
-  }
-
-  @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiParam({name: 'renterId'})
-  @Patch('removeRenter/:renterId')
-  async removeRenter(@Param('renterId') renterId: string) {
-    return this.renterService.deleteRenter(renterId)
   }
 }

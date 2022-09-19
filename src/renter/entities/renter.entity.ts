@@ -1,6 +1,6 @@
 import { Exclude } from "class-transformer";
 import { Role } from "src/common/roles.enum";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('Renters')
 export class Renter {
@@ -34,4 +34,7 @@ export class Renter {
 
     @Column({type: "enum", enum: Role, default: Role.RENTER})
     role: Role;
+    
+    @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+    deletedAt: Date
 }

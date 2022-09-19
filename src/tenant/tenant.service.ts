@@ -50,16 +50,20 @@ export class TenantService {
       return tenant;
     }
 
-    await fs.promises.rm(`./files/${tenant.username}/profile/${file.filename}`, {
-      recursive: true,
-      force: true,
-    });
+    await fs.promises.rm(
+      `./files/${tenant.username}/profile/${file.filename}`,
+      {
+        recursive: true,
+        force: true,
+      },
+    );
 
     throw new BadRequestException({ message: 'signup unsuccessful' });
   }
 
   async updateTenant(id: string, tenantParams: Partial<Tenant>) {
-    const { affected } = await this.tenantRepository.createQueryBuilder()
+    const { affected } = await this.tenantRepository
+      .createQueryBuilder()
       .update(Tenant)
       .set({
         ...tenantParams,
@@ -81,7 +85,8 @@ export class TenantService {
   async changePassTenant(id: string, newPassword: string) {
     newPassword = await bcrypt.hash(newPassword, 10);
 
-    const { affected } = await this.tenantRepository.createQueryBuilder()
+    const { affected } = await this.tenantRepository
+      .createQueryBuilder()
       .update(Tenant)
       .set({
         password: newPassword,
@@ -101,11 +106,17 @@ export class TenantService {
   }
 
   async deleteTenant(id: string) {
-    const { affected } = await this.tenantRepository.delete(id);
-    if (affected && affected > 0) {
+    const { affected } = await this.tenantRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Tenant)
+      .where('Id = :id', { id })
+      .execute();
+    
+      if (affected && affected > 0) {
       return { message: 'delete successfuly' };
     }
+    
     throw new BadRequestException({ message: 'delete unsuccessful' });
   }
 }
-

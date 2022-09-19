@@ -90,10 +90,17 @@ export class RoomService {
   }
 
   async deleteRoom(id: string) {
-    const { affected } = await this.roomRepository.delete(id);
+    const { affected } = await this.roomRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Room)
+      .where('Id = :id', { id })
+      .execute();
+
     if (affected && affected > 0) {
       return { message: 'deleted successfuly' };
     }
+    
     throw new BadRequestException({ message: 'delete unsuccessful' });
   }
 
@@ -136,7 +143,9 @@ export class RoomService {
 
   async acceptBookingRequest(roomId: string, bookingReqId: string) {
     const roomExists = await this.viewRoom(roomId);
-    const bookingReqIdExists = await this.bookingRepository.findOne({ where: { Id: bookingReqId }});
+    const bookingReqIdExists = await this.bookingRepository.findOne({
+      where: { Id: bookingReqId },
+    });
 
     if (!roomExists) {
       throw new BadRequestException({
@@ -150,13 +159,18 @@ export class RoomService {
       .set({
         reserved: true,
         from: bookingReqIdExists.from,
-        to: bookingReqIdExists.to
+        to: bookingReqIdExists.to,
       })
       .where('Id = :roomId', { roomId })
       .execute();
 
     if (affected && affected > 0) {
-      const res = (await this.bookingRepository.delete(roomId)).affected;
+      const res = (await this.bookingRepository
+        .createQueryBuilder()
+        .delete()
+        .from(Room)
+        .where('Id = :roomId', { roomId })
+        .execute()).affected;
       if (res && res > 0) {
         return this.viewRoom(roomId);
       }

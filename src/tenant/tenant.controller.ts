@@ -86,7 +86,7 @@ export class TenantController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({name: 'tenantId'})
-  @Delete('deleteTenantAdmin')
+  @Delete('deleteTenantAdmin/:tenantId')
   async deleteTenantAdmin(@Param('tenantId') tenantId: string) {
     return this.tenantService.deleteTenant(tenantId);
   }

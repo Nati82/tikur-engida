@@ -87,8 +87,7 @@ export class RoomController {
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
-  @ApiParam({name: 'roomId'})
-  @Post('addComment')
+  @Post('addComment/:roomId')
   async addComment(@Body() comment : AddCommentDTO) {
     return this.roomService.addComment(comment);
   }
@@ -112,7 +111,6 @@ export class RoomController {
 
   @Roles(Role.ADMIN, Role.TENANT, Role.RENTER)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
-  @ApiParam({name: 'roomId'})
   @Post('addBookingRequest')
   async addBookingRequest(@Body() booking: RequestBookingDTO) {
     return this.roomService.addBookingRequest(booking);

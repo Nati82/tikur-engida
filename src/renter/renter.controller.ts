@@ -23,6 +23,7 @@ import { ChangePasswordDTO } from 'src/common/dtos/change-password.dto';
 import { CreateUserDTO } from 'src/common/dtos/create-user.dto';
 import { UpdateUserDTO } from 'src/common/dtos/update-user.dto';
 import { Role } from 'src/common/roles.enum';
+import { UpdateRenterDTO } from './dtos/update-renter.dto';
 import { RenterService } from './renter.service';
 
 @ApiTags('renter')
@@ -87,8 +88,17 @@ export class RenterController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({name: 'renterId'})
-  @Delete('deleteRenterAdmin')
-  async deleteTenantAdmin(@Param('renterId') renterId: string) {
-    return this.renterService.deleteRenter(renterId);
+  @Patch('approveRenter/:renterId')
+  async approveRenter(@Param('renterId') renterId: string, @Body() renter: UpdateRenterDTO) {
+    return this.renterService.updateRenter(renterId, renter)
+  }
+
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiParam({name: 'renterId'})
+  @Delete('deleteRenterAdmin/:renterId')
+  async removeRenter(@Param('renterId') renterId: string) {
+    console.log('rene', renterId)
+    return this.renterService.deleteRenter(renterId)
   }
 }
