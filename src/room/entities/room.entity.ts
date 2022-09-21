@@ -29,7 +29,6 @@ export class Room {
   location: string;
 
   @ManyToOne(() => Renter, (renter) => renter.Id)
-  @JoinColumn()
   renterId: string;
 
   @Column({ type: 'bool', default: 'false' })
