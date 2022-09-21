@@ -16,6 +16,9 @@ export class Room {
   @Column({ type: 'varchar', array: true })
   pictures: string[];
 
+  @Column({ type: 'varchar', default: 'private' })
+  company: string;
+
   @Column({ type: 'varchar' })
   city: string;
 
