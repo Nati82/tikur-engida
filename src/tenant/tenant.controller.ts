@@ -48,7 +48,7 @@ export class TenantController {
     return this.tenantService.createTenant(renter, file, fileValidationError);
   }
 
-  @Roles(Role.TENANT)
+  @Roles(Role.TENANT, Role.ADMIN, Role.RENTER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('profile')
   getProfile(@Request() req) {

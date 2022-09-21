@@ -50,7 +50,7 @@ export class RenterController {
     return this.renterService.getAllRenters();
   }
 
-  @Roles(Role.RENTER)
+  @Roles(Role.RENTER, Role.ADMIN, Role.TENANT)
   @UseGuards(JwtAuthGuardRenter, RolesGuard)
   @Get('profile')
   getProfile(@Request() req) {

@@ -36,7 +36,7 @@ export class AdminController {
     return this.adminService.createAdmin(admin);
   }
 
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('profile')
   getProfile(@Request() req) {
