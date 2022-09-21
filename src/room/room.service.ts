@@ -227,7 +227,7 @@ export class RoomService {
     const roomExists = await this.viewRoom(newBooking.roomId.toString());
     const bookingExists = await this.bookingRepository
       .createQueryBuilder('Bookings')
-      .where('Bookings.tenantId = :tenantId', { tenantId: newBooking.tenantId })
+      .where('Bookings.tenantId = :tenantId AND Bookings.roomId = :roomId', { tenantId: newBooking.tenantId.toString(), roomId: newBooking.roomId.toString() })
       .getOne();
 
     if (bookingExists) {
