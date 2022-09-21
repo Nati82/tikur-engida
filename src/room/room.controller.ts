@@ -103,8 +103,9 @@ export class RoomController {
   @Roles(Role.TENANT)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('viewBookingReqTenant')
-  async viewBookingReqTenant(@Req() tenantId: string) {
-    return this.roomService.viewBookingReqTenant(tenantId);
+  async viewBookingReqTenant(@Req() req: any) {
+    const { user } = req;
+    return this.roomService.viewBookingReqTenant(user.Id);
   }
 
   @Roles(Role.ADMIN, Role.RENTER)

@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuardJoined } from 'src/auth/guards/jwt-auth-joined.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from 'src/common/roles.enum';
 import { AddMessageDTO } from './dtos/add-message.dto';
+import { UpdateMessageDTO } from './dtos/update-message.dto';
 import { MessageService } from './message.service';
 
 @ApiTags('message')
@@ -35,9 +36,18 @@ export class MessageController {
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiBody({type: AddMessageDTO})
-  @Get('getMessageWithUser')
+  @Post('getMessageWithUser')
   async sendMessage(@Body() message: AddMessageDTO) {
     return this.messageService.addMessage(message);
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
+  @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'messageId'})
+  @ApiBody({type: AddMessageDTO})
+  @Post('getMessageWithUser')
+  async updateMessage(@Param('messageId') messageId, @Body() message: UpdateMessageDTO) {
+    return this.messageService.updateMessage(messageId, message.message);
   }
 
   
