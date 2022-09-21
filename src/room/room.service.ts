@@ -223,8 +223,11 @@ export class RoomService {
   }
 
   async addBookingRequest(newBooking: Partial<Booking>) {
-    console.log('newBooking', newBooking);
     const roomExists = await this.viewRoom(newBooking.roomId.toString());
+
+    if(roomExists.reserved) {
+      throw new BadRequestException({ message: 'the room is already reserved' });
+    }
     const bookingExists = await this.bookingRepository
       .createQueryBuilder('Bookings')
       .where('Bookings.tenantId = :tenantId AND Bookings.roomId = :roomId', { tenantId: newBooking.tenantId.toString(), roomId: newBooking.roomId.toString() })
