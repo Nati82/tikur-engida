@@ -145,10 +145,18 @@ export class RoomService {
   }
 
   async viewBookingReqTenant(tenantId: string) {
-    console.log('here', tenantId)
     return this.bookingRepository
       .createQueryBuilder('Bookings')
       .where('Bookings.tenantId = :tenantId', {
+        tenantId,
+      })
+      .getMany();
+  }
+
+  async viewBookedRooms(tenantId: string) {
+    return this.roomRepository
+      .createQueryBuilder('Rooms')
+      .where('Rooms.tenantId = :tenantId', {
         tenantId,
       })
       .getMany();

@@ -1,4 +1,6 @@
+import { Exclude } from 'class-transformer';
 import { Renter } from 'src/renter/entities/renter.entity';
+import { Tenant } from 'src/tenant/entities/tenat.entity';
 import {
   Column,
   Entity,
@@ -30,6 +32,10 @@ export class Room {
 
   @ManyToOne(() => Renter, (renter) => renter.Id)
   renterId: Renter;
+
+  @Exclude()  
+  @ManyToOne(() => Tenant, (tenant) => tenant.Id)
+  tenantId: Tenant;
 
   @Column({ type: 'bool', default: 'false' })
   reserved: boolean;

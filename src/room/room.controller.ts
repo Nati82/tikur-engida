@@ -108,6 +108,14 @@ export class RoomController {
     return this.roomService.viewBookingReqTenant(user.Id);
   }
 
+  @Roles(Role.TENANT)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('viewBookedRooms')
+  async viewBookedRooms(@Req() req: any) {
+    const { user } = req;
+    return this.roomService.viewBookedRooms(user.Id);
+  }
+
   @Roles(Role.ADMIN, Role.RENTER)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'roomId'})
