@@ -18,22 +18,26 @@ export class RoomService {
   ) {}
 
   async viewRooms() {
-    return this.roomRepository.find();
+    return this.roomRepository
+      .createQueryBuilder('Rooms')
+      .leftJoinAndSelect('Rooms.renterId', 'renterId')
+      .getMany();
   }
 
   async viewRoomByRenter(renterId: string) {
     return this.roomRepository
-    .createQueryBuilder("Rooms")
-    .where('Rooms.renterId = :renterId', {renterId})
-    .getMany();
+      .createQueryBuilder('Rooms')
+      .leftJoinAndSelect('Rooms.renterId', 'renterId')
+      .where('Rooms.renterId = :renterId', { renterId })
+      .getMany();
   }
 
   async viewRoom(id: string) {
-    return this.roomRepository.findOne({
-      where: {
-        Id: id,
-      },
-    });
+    return this.roomRepository
+      .createQueryBuilder('Rooms')
+      .leftJoinAndSelect('Rooms.renterId', 'renterId')
+      .where('Rooms.Id = :id', { id })
+      .getOne();
   }
 
   async postRoom(
@@ -80,11 +84,11 @@ export class RoomService {
       .execute();
 
     if (affected !== 0) {
-      return this.roomRepository.findOne({
-        where: {
-          Id: id,
-        },
-      });
+      return this.roomRepository
+      .createQueryBuilder('Rooms')
+      .leftJoinAndSelect('Rooms.renterId', 'renterId')
+      .where('Rooms.Id = :id', { id })
+      .getOne();;
     }
 
     throw new BadRequestException({ message: 'update unsuccessful' });
@@ -107,9 +111,9 @@ export class RoomService {
 
   async viewComment(roomId: string) {
     return this.commentRepository
-    .createQueryBuilder("Messages")
-    .where('roomId.Id = :roomId', {roomId})
-    .getMany();
+      .createQueryBuilder('Messages')
+      .where('roomId.Id = :roomId', { roomId })
+      .getMany();
   }
 
   async addComment(newComment: Partial<Comment>) {
@@ -135,9 +139,9 @@ export class RoomService {
 
   async viewBookingRequest(roomId: string) {
     return this.bookingRepository
-    .createQueryBuilder("Bookings")
-    .where('Bookings.roomId = :roomId', {roomId})
-    .getMany();
+      .createQueryBuilder('Bookings')
+      .where('Bookings.roomId = :roomId', { roomId })
+      .getMany();
   }
 
   async viewBookingReqTenant(tenantId: string) {
@@ -222,9 +226,9 @@ export class RoomService {
     console.log('newBooking', newBooking);
     const roomExists = await this.viewRoom(newBooking.roomId.toString());
     const bookingExists = await this.bookingRepository
-    .createQueryBuilder("Bookings")
-    .where('Bookings.tenantId = :tenantId', {tenantId: newBooking.tenantId})
-    .getOne();
+      .createQueryBuilder('Bookings')
+      .where('Bookings.tenantId = :tenantId', { tenantId: newBooking.tenantId })
+      .getOne();
 
     if (bookingExists) {
       return bookingExists;
