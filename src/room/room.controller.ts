@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, UseGuards, Request, UseInterceptors, UploadedFiles, Post, Get, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Patch, UseGuards, Request, UseInterceptors, UploadedFiles, Post, Get, Param, Delete, Req } from '@nestjs/common';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuardRenter } from 'src/auth/guards/jwt-auth-renter.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -98,6 +98,13 @@ export class RoomController {
   @Get('viewBookingRequest/:roomId')
   async viewBookingRequest(@Param('roomId') roomId: string) {
     return this.roomService.viewBookingRequest(roomId);
+  }
+
+  @Roles(Role.TENANT)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('viewBookingReqTenant')
+  async viewBookingReqTenant(@Req() tenantId: string) {
+    return this.roomService.viewBookingReqTenant(tenantId);
   }
 
   @Roles(Role.ADMIN, Role.RENTER)

@@ -143,6 +143,16 @@ export class RoomService {
     });
   }
 
+  async viewBookingReqTenant(tenantId: string) {
+    return this.bookingRepository
+      .createQueryBuilder('Messages')
+      .where('Messages.tenantId = : tenantId', {
+        tenantId,
+      })
+      .groupBy('Messages.roomId')
+      .getMany();
+  }
+
   async acceptBookingRequest(roomId: string, bookingReqId: string) {
     const roomExists = await this.viewRoom(roomId);
     const bookingReqIdExists = await this.bookingRepository.findOne({
@@ -172,7 +182,7 @@ export class RoomService {
         bookingReqIdExists.to.getTime() - Date.now(),
         roomId,
       );
-      
+
       const res = (
         await this.bookingRepository
           .createQueryBuilder()
