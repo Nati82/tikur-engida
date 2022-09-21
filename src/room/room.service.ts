@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import * as fs from 'fs';
 
 import { Booking } from './entities/booking.entity';
@@ -13,6 +14,7 @@ export class RoomService {
     @InjectRepository(Room) private roomRepository: Repository<Room>,
     @InjectRepository(Booking) private bookingRepository: Repository<Booking>,
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
+    private schedulerRegistry: SchedulerRegistry,
   ) {}
 
   async viewRooms() {
@@ -100,7 +102,7 @@ export class RoomService {
     if (affected && affected > 0) {
       return { message: 'deleted successfuly' };
     }
-    
+
     throw new BadRequestException({ message: 'delete unsuccessful' });
   }
 
@@ -165,18 +167,45 @@ export class RoomService {
       .execute();
 
     if (affected && affected > 0) {
-      const res = (await this.bookingRepository
-        .createQueryBuilder()
-        .delete()
-        .from(Room)
-        .where('Id = :roomId', { roomId })
-        .execute()).affected;
+      this.unReserveRoom(
+        `${bookingReqIdExists.Id}-${roomId}-${new Date()}`,
+        bookingReqIdExists.to.getTime() - Date.now(),
+        roomId,
+      );
+      
+      const res = (
+        await this.bookingRepository
+          .createQueryBuilder()
+          .delete()
+          .from(Room)
+          .where('Id = :roomId', { roomId })
+          .execute()
+      ).affected;
+
       if (res && res > 0) {
         return this.viewRoom(roomId);
       }
     }
 
     throw new BadRequestException({ message: 'reserve unsuccessful' });
+  }
+
+  unReserveRoom(name: string, milliseconds: number, roomId: string) {
+    const callback = () => {
+      this.roomRepository
+        .createQueryBuilder()
+        .update(Room)
+        .set({
+          reserved: false,
+          from: null,
+          to: null,
+        })
+        .where('Id = :roomId', { roomId })
+        .execute();
+    };
+
+    const timeout = setTimeout(callback, milliseconds);
+    this.schedulerRegistry.addTimeout(name, timeout);
   }
 
   async addBookingRequest(newBooking: Partial<Booking>) {

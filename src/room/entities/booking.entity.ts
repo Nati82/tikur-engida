@@ -1,5 +1,5 @@
 import { Tenant } from "src/tenant/entities/tenat.entity";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Room } from "./room.entity";
 
 @Entity('Bookings')
@@ -16,11 +16,11 @@ export class Booking {
     @Column({type: 'date', default: new Date()})
     date: Date;
 
-    @OneToOne(() => Room)
+    @ManyToOne(() => Room, (room) => room.Id)
     @JoinColumn()
     roomId: string;
 
-    @OneToOne(() => Tenant)
+    @ManyToOne(() => Tenant, (tenant) => tenant.Id)
     @JoinColumn()
     tenantId: string;
 }

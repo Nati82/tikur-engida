@@ -15,6 +15,8 @@ import { Room } from './room/entities/room.entity';
 import { Booking } from './room/entities/booking.entity';
 import { Comment } from './room/entities/comment.entity';
 import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationModule } from './notification/notification.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -29,12 +31,14 @@ import { ScheduleModule } from '@nestjs/schedule';
       synchronize: true,
     }),
     ScheduleModule.forRoot(),
+    CommonModule,
     RenterModule,
     TenantModule,
     AdminModule,
     MessageModule,
     RoomModule,
     AuthModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

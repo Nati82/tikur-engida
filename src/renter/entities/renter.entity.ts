@@ -34,7 +34,4 @@ export class Renter {
 
     @Column({type: "enum", enum: Role, default: Role.RENTER})
     role: Role;
-    
-    @DeleteDateColumn({ name: 'deleted_at', nullable: true })
-    deletedAt: Date
 }

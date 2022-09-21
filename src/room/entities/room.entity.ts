@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -21,7 +22,7 @@ export class Room {
   @Column({ type: 'varchar' })
   location: string;
 
-  @OneToOne(() => Renter)
+  @ManyToOne(() => Renter, (renter) => renter.Id)
   @JoinColumn()
   renterId: string;
 
