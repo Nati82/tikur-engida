@@ -8,6 +8,10 @@ export class AddRoomDTO {
 
   @ApiProperty()
   @IsString()
+  company: string;
+
+  @ApiProperty()
+  @IsString()
   location: string;
 
   @ApiProperty()
