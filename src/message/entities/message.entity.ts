@@ -20,6 +20,9 @@ export class Message {
     @Column({type: 'varchar'})
     receiverRole: string;
 
+    @Column({type: 'bool', default: false})
+    seen: boolean;
+
     @Column({type: 'timestamp', default: new Date()})
     date: Date;
 }
