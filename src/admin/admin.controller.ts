@@ -36,12 +36,19 @@ export class AdminController {
     return this.adminService.createAdmin(admin);
   }
 
-  @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('profile')
   getProfile(@Request() req) {
     const { user } = req;
     return this.adminService.findAdminByUname(user.username);
+  }
+
+  @Roles(Role.RENTER, Role.TENANT)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('getAdmin')
+  getProfileOthers(@Param('adminId') adminId: string) {
+    return this.adminService.findAdminById(adminId);
   }
 
   @Roles(Role.ADMIN)

@@ -48,12 +48,20 @@ export class TenantController {
     return this.tenantService.createTenant(renter, file, fileValidationError);
   }
 
-  @Roles(Role.TENANT, Role.ADMIN, Role.RENTER)
+  @Roles(Role.TENANT)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('profile')
   getProfile(@Request() req) {
     const { user } = req;
     return this.tenantService.findTenantByUname(user.username);
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiParam({name: 'tenantId'})
+  @Get('getTenant')
+  getProfileOthers(@Param('tenantId') tenantId) {
+    return this.tenantService.findTenantById(tenantId);
   }
 
   @Roles(Role.TENANT)

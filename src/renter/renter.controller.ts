@@ -50,12 +50,19 @@ export class RenterController {
     return this.renterService.getAllRenters();
   }
 
-  @Roles(Role.RENTER, Role.ADMIN, Role.TENANT)
+  @Roles(Role.RENTER)
   @UseGuards(JwtAuthGuardRenter, RolesGuard)
   @Get('profile')
   getProfile(@Request() req) {
     const { user } = req;
     return this.renterService.findRenterByUname(user.username);
+  }
+
+  @Roles(Role.ADMIN, Role.TENANT)
+  @UseGuards(JwtAuthGuardRenter, RolesGuard)
+  @Get('getRenter')
+  getProfileOthers(@Param('renterId') renterId: string) {
+    return this.renterService.findRenterById(renterId);
   }
 
   @Roles(Role.RENTER)
