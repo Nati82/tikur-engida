@@ -7,20 +7,18 @@ export class Booking {
     @PrimaryGeneratedColumn("uuid")
     Id: string;
 
-    @Column({type: 'date'})
+    @Column({type: 'timestamp'})
     from: Date;
 
-    @Column({type: 'date'})
+    @Column({type: 'timestamp'})
     to: Date;
 
-    @Column({type: 'date', default: new Date()})
+    @Column({type: 'timestamp', default: new Date()})
     date: Date;
 
     @ManyToOne(() => Room, (room) => room.Id)
-    @JoinColumn()
-    roomId: string;
+    roomId: Room;
 
     @ManyToOne(() => Tenant, (tenant) => tenant.Id)
-    @JoinColumn()
-    tenantId: string;
+    tenantId: Tenant;
 }

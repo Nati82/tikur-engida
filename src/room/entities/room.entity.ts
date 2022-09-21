@@ -29,7 +29,7 @@ export class Room {
   location: string;
 
   @ManyToOne(() => Renter, (renter) => renter.Id)
-  renterId: string;
+  renterId: Renter;
 
   @Column({ type: 'bool', default: 'false' })
   reserved: boolean;
@@ -37,8 +37,8 @@ export class Room {
   @Column({ type: 'varchar' })
   price: string;
 
-  @Column({ type: 'int' })
-  rooms: number;
+  @Column({ type: 'int', default: 1 })
+  beds: number;
 
   @Column({ type: 'varchar' })
   description: string;
@@ -46,9 +46,9 @@ export class Room {
   @Column({type: 'bool', default: false})
   approved: boolean;
 
-  @Column({type: 'date', default: null})
+  @Column({type: 'timestamp', default: null})
   from: Date;
 
-  @Column({type: 'date', default: null})
+  @Column({type: 'timestamp', default: null})
   to: Date;
 }

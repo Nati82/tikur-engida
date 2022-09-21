@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsDateString, IsString, IsUUID } from 'class-validator';
 
 export class RequestBookingDTO {
   @ApiProperty()
@@ -12,17 +12,21 @@ export class RequestBookingDTO {
 
   @ApiProperty()
   @IsUUID()
-  renterId: string;
+  roomId: any;
 
   @ApiProperty()
   @IsUUID()
-  tenantId: string;
+  renterId: any;
 
   @ApiProperty()
-  @IsDate()
+  @IsUUID()
+  tenantId: any;
+
+  @ApiProperty()
+  @IsDateString()
   from: Date;
 
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   to: Date;
 }

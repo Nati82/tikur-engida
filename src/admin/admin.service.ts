@@ -88,7 +88,12 @@ export class AdminService {
   }
 
   async deleteAdmin(id: string) {
-    const { affected } = await this.adminRepository.delete(id);
+    const { affected } = await this.adminRepository.createQueryBuilder()
+    .delete()
+    .from(Admin)
+    .where('Id = :id', { id })
+    .execute();
+    
     if (affected && affected > 0) {
       return { message: 'admin deleted successfuly' };
     }

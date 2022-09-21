@@ -20,6 +20,6 @@ export class Message {
     @Column({type: 'varchar'})
     receiverRole: string;
 
-    @Column({type: 'date', default: new Date()})
+    @Column({type: 'timestamp', default: new Date()})
     date: Date;
 }

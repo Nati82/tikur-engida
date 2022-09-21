@@ -9,9 +9,9 @@ export class AddCommentDTO {
 
   @ApiProperty()
   @IsUUID()
-  tenantId: string;
+  tenantId: any;
 
   @ApiProperty()
   @IsUUID()
-  roomId: string;
+  roomId: any;
 }

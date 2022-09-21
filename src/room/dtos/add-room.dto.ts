@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNumber, IsNumberString, IsOptional, IsString, IsUUID } from 'class-validator';
+import { Renter } from 'src/renter/entities/renter.entity';
 
 export class AddRoomDTO {
   @ApiProperty()
@@ -20,7 +21,7 @@ export class AddRoomDTO {
 
   @ApiProperty()
   @IsUUID()
-  renterId: string;
+  renterId: any;
 
   @ApiProperty()
   @IsString()

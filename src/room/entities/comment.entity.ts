@@ -8,16 +8,14 @@ export class Comment {
     Id: string;
 
     @ManyToOne(() => Tenant, (tenant) => tenant.Id)
-    @JoinColumn()
-    tenantId: string;
+    tenantId: Tenant;
 
     @ManyToOne(() => Room, (room) => room.Id)
-    @JoinColumn()
-    roomId: string;
+    roomId: Room;
 
     @Column({type: 'varchar'})
     comment: string;
 
-    @Column({type: 'date', default: new Date()})
+    @Column({type: 'timestamp', default: new Date()})
     date: Date;
 }

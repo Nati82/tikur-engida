@@ -22,11 +22,10 @@ export class RoomService {
   }
 
   async viewRoomByRenter(renterId: string) {
-    return this.roomRepository.find({
-      where: {
-        renterId,
-      },
-    });
+    return this.roomRepository
+    .createQueryBuilder("Rooms")
+    .where('Rooms.renterId = :renterId', {renterId})
+    .getMany();
   }
 
   async viewRoom(id: string) {
@@ -107,15 +106,14 @@ export class RoomService {
   }
 
   async viewComment(roomId: string) {
-    return this.commentRepository.find({
-      where: {
-        roomId,
-      },
-    });
+    return this.commentRepository
+    .createQueryBuilder("Messages")
+    .where('roomId.Id = :roomId', {roomId})
+    .getMany();
   }
 
   async addComment(newComment: Partial<Comment>) {
-    const roomExists = await this.viewRoom(newComment.roomId);
+    const roomExists = await this.viewRoom(newComment.roomId.toString());
 
     if (!roomExists) {
       throw new BadRequestException({
@@ -136,11 +134,10 @@ export class RoomService {
   }
 
   async viewBookingRequest(roomId: string) {
-    return this.bookingRepository.find({
-      where: {
-        roomId,
-      },
-    });
+    return this.bookingRepository
+    .createQueryBuilder("Bookings")
+    .where('Bookings.roomId = :roomId', {roomId})
+    .getMany();
   }
 
   async viewBookingReqTenant(tenantId: string) {
@@ -177,9 +174,12 @@ export class RoomService {
       .execute();
 
     if (affected && affected > 0) {
+      const to = new Date(bookingReqIdExists.to);
+      const now = new Date(new Date().setHours(new Date().getHours() + 3));
+
       this.unReserveRoom(
         `${bookingReqIdExists.Id}-${roomId}-${new Date()}`,
-        bookingReqIdExists.to.getTime() - Date.now(),
+        to.getTime() - now.getTime(),
         roomId,
       );
 
@@ -187,8 +187,8 @@ export class RoomService {
         await this.bookingRepository
           .createQueryBuilder()
           .delete()
-          .from(Room)
-          .where('Id = :roomId', { roomId })
+          .from(Booking)
+          .where('roomId = :roomId', { roomId })
           .execute()
       ).affected;
 
@@ -219,10 +219,12 @@ export class RoomService {
   }
 
   async addBookingRequest(newBooking: Partial<Booking>) {
-    const roomExists = await this.viewRoom(newBooking.roomId);
-    const bookingExists = await this.bookingRepository.findOne({
-      where: { tenantId: newBooking.tenantId },
-    });
+    console.log('newBooking', newBooking);
+    const roomExists = await this.viewRoom(newBooking.roomId.toString());
+    const bookingExists = await this.bookingRepository
+    .createQueryBuilder("Bookings")
+    .where('Bookings.tenantId = :tenantId', {tenantId: newBooking.tenantId})
+    .getOne();
 
     if (bookingExists) {
       return bookingExists;
