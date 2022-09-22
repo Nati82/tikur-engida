@@ -45,7 +45,7 @@ export class MessageController {
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'messageId'})
   @ApiBody({type: AddMessageDTO})
-  @Patch('getMessageWithUser')
+  @Patch('updateMessage')
   async updateMessage(@Param('messageId') messageId, @Body() message: UpdateMessageDTO) {
     return this.messageService.updateMessage(messageId, message.message);
   }
@@ -53,7 +53,7 @@ export class MessageController {
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'messageId'})
-  @Delete('getMessageWithUser')
+  @Delete('deleteMessage')
   async deleteMessage(@Param('messageId') messageId) {
     return this.messageService.deleteMessage(messageId);
   }
