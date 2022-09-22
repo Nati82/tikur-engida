@@ -17,26 +17,26 @@ export class MessageController {
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({ name: 'page', type: 'number' })
-  @Get('getMessages')
-  async getMessages(@Req() req: any, @Param('page') page: number) {
+  @Get('getMessages/:page')
+  async getMessages(@Req() req: any, @Param('page') page: string) {
     const { user } = req;
-    return this.messageService.getMyMessages(user.Id, page);
+    return this.messageService.getMyMessages(user.Id, parseInt(page));
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({ name: 'otherUserId'})
   @ApiParam({ name: 'page', type: 'number' })
-  @Get('getMessageWithUser')
-  async getMessagesWithUser(@Req() req: any, @Param('otherUserId') otherUserId: string, @Param('page') page: number) {
+  @Get('getMessageWithUser/:page/:otherUserId')
+  async getMessagesWithUser(@Req() req: any, @Param('otherUserId') otherUserId: string, @Param('page') page: string) {
     const { user } = req;
-    return this.messageService.getMessageWithUser(user.Id, otherUserId,page);
+    return this.messageService.getMessageWithUser(user.Id, otherUserId,parseInt(page));
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiBody({type: AddMessageDTO})
-  @Post('getMessageWithUser')
+  @Post('sendMessage')
   async sendMessage(@Body() message: AddMessageDTO) {
     return this.messageService.addMessage(message);
   }
@@ -45,7 +45,7 @@ export class MessageController {
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'messageId'})
   @ApiBody({type: AddMessageDTO})
-  @Patch('updateMessage')
+  @Patch('updateMessage/:messageId')
   async updateMessage(@Param('messageId') messageId, @Body() message: UpdateMessageDTO) {
     return this.messageService.updateMessage(messageId, message.message);
   }
@@ -53,7 +53,7 @@ export class MessageController {
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'messageId'})
-  @Delete('deleteMessage')
+  @Delete('deleteMessage/:messageId')
   async deleteMessage(@Param('messageId') messageId) {
     return this.messageService.deleteMessage(messageId);
   }

@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import { Booking } from './entities/booking.entity';
 import { Room } from './entities/room.entity';
 import { Comment } from './entities/comment.entity';
+import { BookingStatus } from 'src/common/booking-status.enum';
 
 @Injectable()
 export class RoomService {
@@ -198,16 +199,29 @@ export class RoomService {
         roomId,
       );
 
-      const res = (
+      const resAccepted = (
         await this.bookingRepository
           .createQueryBuilder()
-          .delete()
-          .from(Booking)
+          .update(Booking)
+          .set({
+            status: BookingStatus.ACCEPTED,
+          })
           .where('roomId = :roomId', { roomId })
           .execute()
       ).affected;
 
-      if (res && res > 0) {
+      const resDenied = (
+        await this.bookingRepository
+          .createQueryBuilder()
+          .update(Booking)
+          .set({
+            status: BookingStatus.DENIED,
+          })
+          .where('roomId = :roomId', { roomId })
+          .execute()
+      ).affected;
+
+      if (resAccepted && resAccepted > 0) {
         return this.viewRoom(roomId);
       }
     }
