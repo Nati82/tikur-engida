@@ -206,7 +206,8 @@ export class RoomService {
           .set({
             status: BookingStatus.ACCEPTED,
           })
-          .where('roomId = :roomId', { roomId })
+          .where('Id = :Id', { Id: bookingReqId })
+          .andWhere('status = :pending', {pending: BookingStatus.PENDING})
           .execute()
       ).affected;
 
@@ -217,11 +218,12 @@ export class RoomService {
           .set({
             status: BookingStatus.DENIED,
           })
-          .where('roomId = :roomId', { roomId: Not(roomId) })
+          .where('Id != :Id', { Id: bookingReqId })
+          .andWhere('status = :pending', {pending: BookingStatus.PENDING})
           .execute()
       ).affected;
 
-      if (resAccepted && resAccepted > 0) {
+      if (resAccepted && resAccepted > 0 || resDenied && resDenied > 0) {
         return this.viewRoom(roomId);
       }
     }
@@ -262,6 +264,7 @@ export class RoomService {
         tenantId: newBooking.tenantId.toString(),
         roomId: newBooking.roomId.toString(),
       })
+      .andWhere('Bookings.status = :pending', {pending: BookingStatus.PENDING})
       .getOne();
 
     if (bookingExists) {
