@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import * as fs from 'fs';
 
@@ -217,7 +217,7 @@ export class RoomService {
           .set({
             status: BookingStatus.DENIED,
           })
-          .where('roomId = :roomId', { roomId })
+          .where('roomId = :roomId', { roomId: Not(roomId) })
           .execute()
       ).affected;
 
