@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuardJoined } from 'src/auth/guards/jwt-auth-joined.guard';
@@ -45,9 +45,17 @@ export class MessageController {
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'messageId'})
   @ApiBody({type: AddMessageDTO})
-  @Post('getMessageWithUser')
+  @Patch('getMessageWithUser')
   async updateMessage(@Param('messageId') messageId, @Body() message: UpdateMessageDTO) {
     return this.messageService.updateMessage(messageId, message.message);
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
+  @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'messageId'})
+  @Delete('getMessageWithUser')
+  async deleteMessage(@Param('messageId') messageId) {
+    return this.messageService.deleteMessage(messageId);
   }
 
   

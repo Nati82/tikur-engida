@@ -85,10 +85,10 @@ export class RoomService {
 
     if (affected !== 0) {
       return this.roomRepository
-      .createQueryBuilder('Rooms')
-      .leftJoinAndSelect('Rooms.renterId', 'renterId')
-      .where('Rooms.Id = :id', { id })
-      .getOne();;
+        .createQueryBuilder('Rooms')
+        .leftJoinAndSelect('Rooms.renterId', 'renterId')
+        .where('Rooms.Id = :id', { id })
+        .getOne();
     }
 
     throw new BadRequestException({ message: 'update unsuccessful' });
@@ -164,9 +164,11 @@ export class RoomService {
 
   async acceptBookingRequest(roomId: string, bookingReqId: string) {
     const roomExists = await this.viewRoom(roomId);
-    const bookingReqIdExists = await this.bookingRepository.findOne({
-      where: { Id: bookingReqId },
-    });
+    const bookingReqIdExists = await this.bookingRepository
+      .createQueryBuilder('Bookings')
+      .leftJoinAndSelect('Bookings.tenantId', 'tenantId')
+      .where('Bookings.Id = :bookingReqId', { bookingReqId })
+      .getOne();
 
     if (!roomExists) {
       throw new BadRequestException({
@@ -181,6 +183,7 @@ export class RoomService {
         reserved: true,
         from: bookingReqIdExists.from,
         to: bookingReqIdExists.to,
+        tenantId: bookingReqIdExists.tenantId,
       })
       .where('Id = :roomId', { roomId })
       .execute();
@@ -221,6 +224,7 @@ export class RoomService {
           reserved: false,
           from: null,
           to: null,
+          tenantId: null,
         })
         .where('Id = :roomId', { roomId })
         .execute();
@@ -233,12 +237,17 @@ export class RoomService {
   async addBookingRequest(newBooking: Partial<Booking>) {
     const roomExists = await this.viewRoom(newBooking.roomId.toString());
 
-    if(roomExists.reserved) {
-      throw new BadRequestException({ message: 'the room is already reserved' });
+    if (roomExists.reserved) {
+      throw new BadRequestException({
+        message: 'the room is already reserved',
+      });
     }
     const bookingExists = await this.bookingRepository
       .createQueryBuilder('Bookings')
-      .where('Bookings.tenantId = :tenantId AND Bookings.roomId = :roomId', { tenantId: newBooking.tenantId.toString(), roomId: newBooking.roomId.toString() })
+      .where('Bookings.tenantId = :tenantId AND Bookings.roomId = :roomId', {
+        tenantId: newBooking.tenantId.toString(),
+        roomId: newBooking.roomId.toString(),
+      })
       .getOne();
 
     if (bookingExists) {

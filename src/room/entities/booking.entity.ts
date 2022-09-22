@@ -1,5 +1,5 @@
 import { Tenant } from "src/tenant/entities/tenat.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Room } from "./room.entity";
 
 @Entity('Bookings')
