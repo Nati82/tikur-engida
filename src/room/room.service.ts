@@ -138,28 +138,38 @@ export class RoomService {
     return comment;
   }
 
-  async viewBookingRequest(roomId: string) {
+  async viewBookingRequest(roomId: string, page: number) {
     return this.bookingRepository
       .createQueryBuilder('Bookings')
       .where('Bookings.roomId = :roomId', { roomId })
+      .leftJoinAndSelect('Bookings.tenantId', 'tenantId')
+      .leftJoinAndSelect('Bookings.roomId', 'roomId')
+      .take(50)
+      .skip((page - 1) * 50)
       .getMany();
   }
 
-  async viewBookingReqTenant(tenantId: string) {
+  async viewBookingReqTenant(tenantId: string, page: number) {
     return this.bookingRepository
       .createQueryBuilder('Bookings')
       .where('Bookings.tenantId = :tenantId', {
         tenantId,
       })
+      .leftJoinAndSelect('Bookings.tenantId', 'tenantId')
+      .leftJoinAndSelect('Bookings.roomId', 'roomId')
+      .take(50)
+      .skip((page - 1) * 50)
       .getMany();
   }
 
-  async viewBookedRooms(tenantId: string) {
+  async viewBookedRooms(tenantId: string, page: number) {
     return this.roomRepository
       .createQueryBuilder('Rooms')
       .where('Rooms.tenantId = :tenantId', {
         tenantId,
       })
+      .leftJoinAndSelect('Rooms.tenantId', 'tenantId')
+      .leftJoinAndSelect('Rooms.renterId', 'renterId')
       .getMany();
   }
 
@@ -265,6 +275,8 @@ export class RoomService {
         roomId: newBooking.roomId.toString(),
       })
       .andWhere('Bookings.status = :pending', {pending: BookingStatus.PENDING})
+      .leftJoinAndSelect('Bookings.tenantId', 'tenantId')
+      .leftJoinAndSelect('Bookings.roomId', 'roomId')
       .getOne();
 
     if (bookingExists) {

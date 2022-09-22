@@ -95,25 +95,28 @@ export class RoomController {
   @Roles(Role.ADMIN, Role.TENANT, Role.RENTER)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'roomId'})
-  @Get('viewBookingRequest/:roomId')
-  async viewBookingRequest(@Param('roomId') roomId: string) {
-    return this.roomService.viewBookingRequest(roomId);
+  @ApiParam({name: 'page', type: 'number'})
+  @Get('viewBookingRequest/:roomId/:page')
+  async viewBookingRequest(@Param('roomId') roomId: string, @Param('page') page: string) {
+    return this.roomService.viewBookingRequest(roomId, parseInt(page));
   }
 
   @Roles(Role.TENANT)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('viewBookingReqTenant')
-  async viewBookingReqTenant(@Req() req: any) {
+  @ApiParam({name: 'page', type: 'number'})
+  @Get('viewBookingReqTenant/:page')
+  async viewBookingReqTenant(@Req() req: any, @Param('page') page: string) {
     const { user } = req;
-    return this.roomService.viewBookingReqTenant(user.Id);
+    return this.roomService.viewBookingReqTenant(user.Id, parseInt(page));
   }
 
   @Roles(Role.TENANT)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('viewBookedRooms')
-  async viewBookedRooms(@Req() req: any) {
+  @ApiParam({name: 'page', type: 'number'})
+  @Get('viewBookedRooms/:page')
+  async viewBookedRooms(@Req() req: any, @Param('page') page: string) {
     const { user } = req;
-    return this.roomService.viewBookedRooms(user.Id);
+    return this.roomService.viewBookedRooms(user.Id, parseInt(page));
   }
 
   @Roles(Role.ADMIN, Role.RENTER)
