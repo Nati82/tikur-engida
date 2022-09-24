@@ -15,16 +15,29 @@ export class MessageService {
     if (count === 0) {
       return { message: 'you have no messages yet' };
     }
-    console.log('count', count);
 
-    return this.messageRepository
+    const messages = await this.messageRepository
       .createQueryBuilder('Messages')
+      .distinctOn(['Messages.senderId', 'Messages.receiverId'])
       .where('Messages.senderId = :userId', { userId })
       .orWhere('Messages.receiverId = :userId', { userId })
-      .distinctOn(['Messages.senderId', 'Messages.receiverId'])
+      .orderBy('Messages.senderId', 'ASC')
+      .addOrderBy('Messages.receiverId', 'ASC')
+      .addOrderBy('Messages.date', 'DESC')
       .take(50)
       .skip((page - 1) * 50)
       .getMany();
+
+      let tempArray = [messages[0]];
+
+      for (const m of messages) {
+        const v = tempArray.find(t => m.senderId != t.receiverId && m.receiverId != t.senderId)
+        if(!v) {
+          tempArray.push(m);
+        }
+      }
+    
+      return tempArray;
   }
 
   async getMessageWithUser(myId: string, otherUserId: string, page: number) {

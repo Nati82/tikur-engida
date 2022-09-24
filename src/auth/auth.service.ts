@@ -16,12 +16,9 @@ export class AuthService {
   ) {}
 
   async validateAdmin(username: string, pass: string): Promise<any> {
-    console.log('username', username, 'password', pass);
     const admin = await this.adminService.findAdminByUname(username);
-    console.log('admin', admin);
 
     const res = await bcrypt.compare(pass, admin.password);
-    console.log('res', res);
     if (admin && res) {
       const { password, ...result } = admin;
       return result;
@@ -44,9 +41,7 @@ export class AuthService {
   }
 
   async validateTenant(username: string, pass: string): Promise<any> {
-    console.log('username', username, 'password', pass);
     const tenant = await this.tenantService.findTenantByUname(username);
-    console.log('admin', tenant);
 
     const res = await bcrypt.compare(pass, tenant.password);
     console.log('res', res);

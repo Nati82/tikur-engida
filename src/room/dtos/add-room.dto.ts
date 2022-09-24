@@ -29,7 +29,7 @@ export class AddRoomDTO {
 
   @ApiProperty()
   @IsNumberString()
-  rooms: number;
+  beds: number;
 
   @ApiProperty()
   @IsString()
