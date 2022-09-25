@@ -47,6 +47,14 @@ export class RoomController {
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'city'})
+  @Get('viewRoomsByCity/:city')
+  async viewRoomByCity(@Param('city') city: string) {
+    return this.roomService.viewRoomByCity(city);
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
+  @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'renterId'})
   @Get('viewRoomsByRenter/:renterId')
   async viewRoomByRenter(@Param('renterId') renterId: string) {
@@ -126,6 +134,14 @@ export class RoomController {
   @Patch('acceptBookingRequest/:roomId/:bookingReqId')
   async acceptBookingRequest(@Param('roomId') roomId: string, @Param('bookingReqId') bookingReqId: string) {
     return this.roomService.acceptBookingRequest(roomId, bookingReqId);
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER)
+  @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiParam({name: 'roomId'})
+  @Patch('cancelRoomReservation/:roomId')
+  async cancelRoomReservation(@Param('roomId') roomId: string) {
+    return this.roomService.cancelReserve(roomId);
   }
 
   @Roles(Role.ADMIN, Role.TENANT, Role.RENTER)

@@ -9,6 +9,10 @@ export class AddRoomDTO {
 
   @ApiProperty()
   @IsString()
+  roomName: string;
+
+  @ApiProperty()
+  @IsString()
   companyType: string;
 
   @ApiProperty()
@@ -19,7 +23,7 @@ export class AddRoomDTO {
   @IsString()
   location: string;
 
-  @ApiProperty()
+  @ApiProperty({type: "string"})
   @IsUUID()
   renterId: any;
 

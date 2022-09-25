@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { NotificationModule } from 'src/notification/notification.module';
 import { RenterModule } from 'src/renter/renter.module';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';

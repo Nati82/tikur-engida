@@ -44,7 +44,7 @@ export class AuthService {
     const tenant = await this.tenantService.findTenantByUname(username);
 
     const res = await bcrypt.compare(pass, tenant.password);
-    console.log('res', res);
+    
     if (tenant && res) {
       const { password, ...result } = tenant;
       return result;

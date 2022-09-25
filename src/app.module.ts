@@ -18,6 +18,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationModule } from './notification/notification.module';
 import { CommonModule } from './common/common.module';
 import { Message } from './message/entities/message.entity';
+import { Notification } from './notification/entities/notification.entity';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { Message } from './message/entities/message.entity';
       username: 'Tikur-Engida',
       password: 'Tikur',
       database: 'TikurEngida',
-      entities: [Admin, Renter, Tenant, Room, Booking, Comment, Message],
+      entities: [Admin, Renter, Tenant, Room, Booking, Comment, Message, Notification],
       synchronize: true,
     }),
     ScheduleModule.forRoot(),

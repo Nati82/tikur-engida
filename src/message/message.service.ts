@@ -1,12 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NotificationType } from 'src/notification/notification-type.enum';
+import { NotificationService } from 'src/notification/notification.service';
 import { Brackets, Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 
 @Injectable()
 export class MessageService {
+  public socket: any;
   constructor(
     @InjectRepository(Message) private messageRepository: Repository<Message>,
+    private notificationService: NotificationService,
   ) {}
 
   async getMyMessages(userId: string, page: number) {
@@ -28,16 +32,25 @@ export class MessageService {
       .skip((page - 1) * 50)
       .getMany();
 
-      let tempArray = [messages[0]];
+    let tempArray = [];
 
-      for (const m of messages) {
-        const v = tempArray.find(t => m.senderId != t.receiverId && m.receiverId != t.senderId)
-        if(!v) {
+    for (const m of messages) {
+      if (tempArray.length === 0) {
+        tempArray = [messages[0]];
+      } else {
+        const v = tempArray.find(
+          (t) =>
+            (m.senderId === t.receiverId && m.receiverId === t.senderId) ||
+            (m.senderId === t.senderId && m.receiverId === t.receiverId),
+        );
+        if (!v) {
           tempArray.push(m);
         }
       }
-    
-      return tempArray;
+    }
+
+    tempArray.sort((a, b) => b.date.getTime() - a.date.getTime());
+    return tempArray;
   }
 
   async getMessageWithUser(myId: string, otherUserId: string, page: number) {
@@ -46,7 +59,7 @@ export class MessageService {
     if (count === 0) {
       return { message: 'you have no messages yet' };
     }
-    
+
     return this.messageRepository
       .createQueryBuilder('Messages')
       .where(
@@ -65,7 +78,18 @@ export class MessageService {
 
   async addMessage(newMessage: Partial<Message>) {
     const tempMessage = this.messageRepository.create(newMessage);
-    return this.messageRepository.save(tempMessage);
+    const message = await this.messageRepository.save(tempMessage);
+
+    if (message) {
+      console.log('message', message);
+      this.notificationService.addNotification({
+        receiverId: message.receiverId,
+        type: NotificationType.NEW_MESSAGE,
+      });
+      return message;
+    }
+
+    throw new BadRequestException({ message: 'message not sent' });
   }
 
   async updateMessage(messageId: string, message: string) {

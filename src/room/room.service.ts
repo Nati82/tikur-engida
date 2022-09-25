@@ -8,6 +8,8 @@ import { Booking } from './entities/booking.entity';
 import { Room } from './entities/room.entity';
 import { Comment } from './entities/comment.entity';
 import { BookingStatus } from 'src/common/booking-status.enum';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationType } from 'src/notification/notification-type.enum';
 
 @Injectable()
 export class RoomService {
@@ -16,12 +18,21 @@ export class RoomService {
     @InjectRepository(Booking) private bookingRepository: Repository<Booking>,
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
     private schedulerRegistry: SchedulerRegistry,
+    private notificationService: NotificationService
   ) {}
 
   async viewRooms() {
     return this.roomRepository
       .createQueryBuilder('Rooms')
       .leftJoinAndSelect('Rooms.renterId', 'renterId')
+      .getMany();
+  }
+
+  async viewRoomByCity(city: string) {
+    return this.roomRepository
+      .createQueryBuilder('Rooms')
+      .leftJoinAndSelect('Rooms.renterId', 'renterId')
+      .where('Rooms.city = :city', { city })
       .getMany();
   }
 
@@ -234,6 +245,7 @@ export class RoomService {
       ).affected;
 
       if (resAccepted && resAccepted > 0 || resDenied && resDenied > 0) {
+        this.notificationService.addNotification({receiverId: bookingReqIdExists.tenantId.Id, type: NotificationType.REQUEST_ACCEPTED});
         return this.viewRoom(roomId);
       }
     }
@@ -258,6 +270,20 @@ export class RoomService {
 
     const timeout = setTimeout(callback, milliseconds);
     this.schedulerRegistry.addTimeout(name, timeout);
+  }
+
+  async cancelReserve(roomId: string) {
+    this.roomRepository
+        .createQueryBuilder()
+        .update(Room)
+        .set({
+          reserved: false,
+          from: null,
+          to: null,
+          tenantId: null,
+        })
+        .where('Id = :roomId', { roomId })
+        .execute();
   }
 
   async addBookingRequest(newBooking: Partial<Booking>) {
@@ -293,6 +319,7 @@ export class RoomService {
     const booking = await this.bookingRepository.save(tempBooking);
 
     if (booking) {
+      this.notificationService.addNotification({receiverId: booking.tenantId.Id, type: NotificationType.NEW_REQUEST});
       return booking;
     }
 

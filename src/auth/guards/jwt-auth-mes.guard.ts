@@ -1,11 +1,13 @@
 import { Injectable, ExecutionContext, UnauthorizedException } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { Observable } from "rxjs";
+import { MessageService } from "src/message/message.service";
 
 @Injectable()
-export class JwtAuthGuardSocket extends AuthGuard(['jwt', 'jwtRenter']) {
+export class JwtAuthGuardMess extends AuthGuard(['jwt', 'jwtRenter']) {
 
-    private constext: any;
+    constructor(private messageService: MessageService) {
+        super();
+    }
 
   getRequest(context: ExecutionContext) {
     const ws = context.switchToWs().getClient(); // possibly `getData()` instead.
@@ -18,7 +20,7 @@ export class JwtAuthGuardSocket extends AuthGuard(['jwt', 'jwtRenter']) {
   
   handleRequest(err, user, info) {
     // You can throw an exception based on either "info" or "err" arguments
-    console.log('usr', user);
+    this.messageService.socket.user = user; 
     if (err || !user) {
       throw err || new UnauthorizedException();
     }

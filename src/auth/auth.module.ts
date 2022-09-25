@@ -14,6 +14,7 @@ import { JwtStrategyRenter } from './strategies/jwt-renter.strategy';
 import { TenantModule } from 'src/tenant/tenant.module';
 import { LocalStrategyTenant } from './strategies/local-tenant.strategy';
 import { JwtAuthGuardJoined } from './guards/jwt-auth-joined.guard';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { JwtAuthGuardJoined } from './guards/jwt-auth-joined.guard';
     }),
     AdminModule,
     RenterModule,
-    TenantModule
+    TenantModule,
   ],
   providers: [
     AuthService,

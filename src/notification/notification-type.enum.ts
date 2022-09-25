@@ -1,0 +1,5 @@
+export enum NotificationType {
+    REQUEST_ACCEPTED = 'REQUEST_ACCEPTED',
+    NEW_REQUEST = 'NEW_REQUEST',
+    NEW_MESSAGE = 'NEW_MESSAGE'
+}

@@ -6,9 +6,10 @@ import { NotificationService } from 'src/notification/notification.service';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class SocketRolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
+    private notificationService: NotificationService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -21,8 +22,7 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const { user } = context.switchToHttp().getRequest();
-
+    const { user } = this.notificationService.socket;
     return requiredRoles.some((role) => user.role?.includes(role));
   }
 }
