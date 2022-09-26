@@ -4,12 +4,11 @@ import { NotificationService } from './notification/notification.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService, private notificationService: NotificationService) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   @Redirect('/api')
   getHello(): string {
-    console.log('from app', this.notificationService.socket);
     return this.appService.getHello();
   }
 }

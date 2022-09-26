@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 
 @Injectable()
@@ -30,4 +30,21 @@ export class NotificationService {
 
         throw new WsException('could not create notification');
     }
+    
+    async markAsSeen(notificationIds: string[]) {
+        const { affected } = await this.notificationRepository
+          .createQueryBuilder()
+          .update(Notification)
+          .set({
+            seen: true,
+          })
+          .where('Id IN (:...notificationId)', { notificationId: notificationIds })
+          .execute();
+          
+        if (affected && affected > 0) {
+          return this.notificationRepository.find({where: { Id: In(notificationIds)} })
+        }
+    
+        throw new BadRequestException({ message: 'update message unsuccessful' });
+      }
 }

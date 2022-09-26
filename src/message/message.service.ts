@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationType } from 'src/notification/notification-type.enum';
 import { NotificationService } from 'src/notification/notification.service';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, In, Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 
 @Injectable()
@@ -99,11 +99,28 @@ export class MessageService {
       .set({
         message,
       })
-      .where('Messages.Id = :messageId', { messageId })
+      .where('Id = :messageId', { messageId })
       .execute();
 
     if (affected && affected > 0) {
       return this.messageRepository.findOne({ where: { Id: messageId } });
+    }
+
+    throw new BadRequestException({ message: 'update message unsuccessful' });
+  }
+
+  async markAsSeen(messageIds: string[]) {
+    const { affected } = await this.messageRepository
+      .createQueryBuilder()
+      .update(Message)
+      .set({
+        seen: true,
+      })
+      .where('Id IN (:...messageId)', { messageId: messageIds })
+      .execute();
+      
+    if (affected && affected > 0) {
+      return this.messageRepository.find({where: { Id: In(messageIds)} })
     }
 
     throw new BadRequestException({ message: 'update message unsuccessful' });
@@ -114,7 +131,7 @@ export class MessageService {
       .createQueryBuilder()
       .delete()
       .from(Message)
-      .where('Messages.Id = :messageId', { messageId })
+      .where('Id = :messageId', { messageId })
       .execute();
 
     if (affected && affected > 0) {

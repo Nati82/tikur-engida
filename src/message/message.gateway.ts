@@ -54,6 +54,24 @@ export class MessageGateway implements OnGatewayInit{
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardMess, SocMessRolesGuard)
+  @SubscribeMessage(MessageType.SEND_UPDATE_MESSAGE)
+  async markAsSeen(_client: any, payload: {messageIds: string[]}) {
+    try {
+      const { messageIds } = payload;
+      const updateMessage = await this.messageService.markAsSeen(messageIds);
+      if(updateMessage) {
+          this.messageService.socket.emit(MessageType.RECEIVE_MESSAGE_SEEN, {message: updateMessage});
+          return {message: updateMessage};
+      }
+    }
+    catch (e) {
+      console.log('e', e);
+      throw new WsException({message: 'message not sent'})
+    }
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
+  @UseGuards(JwtAuthGuardMess, SocMessRolesGuard)
   @SubscribeMessage(MessageType.SEND_DELETE_MESSAGE)
   async deleteMessage(_client: any, payload: {messageId: string}) {
     try {

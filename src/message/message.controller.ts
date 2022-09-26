@@ -5,6 +5,7 @@ import { JwtAuthGuardJoined } from 'src/auth/guards/jwt-auth-joined.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from 'src/common/roles.enum';
 import { AddMessageDTO } from './dtos/add-message.dto';
+import { MarkAsSeenDTO } from './dtos/mark-as-seen.dto';
 import { UpdateMessageDTO } from './dtos/update-message.dto';
 import { MessageService } from './message.service';
 
@@ -44,10 +45,18 @@ export class MessageController {
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
   @UseGuards(JwtAuthGuardJoined, RolesGuard)
   @ApiParam({name: 'messageId'})
-  @ApiBody({type: AddMessageDTO})
+  @ApiBody({type: UpdateMessageDTO})
   @Patch('updateMessage/:messageId')
   async updateMessage(@Param('messageId') messageId, @Body() message: UpdateMessageDTO) {
     return this.messageService.updateMessage(messageId, message.message);
+  }
+
+  @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
+  @UseGuards(JwtAuthGuardJoined, RolesGuard)
+  @ApiBody({ type: MarkAsSeenDTO })
+  @Patch('markAsSeen')
+  async markAsSeen(@Body() messageIds: MarkAsSeenDTO) {
+    return this.messageService.markAsSeen(messageIds.messageIds);
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
