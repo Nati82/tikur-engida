@@ -150,14 +150,20 @@ export class RoomService {
   }
 
   async viewBookingRequest(roomId: string, page: number) {
-    return this.bookingRepository
-      .createQueryBuilder('Bookings')
-      .where('Bookings.roomId = :roomId', { roomId })
-      .leftJoinAndSelect('Bookings.tenantId', 'tenantId')
-      .leftJoinAndSelect('Bookings.roomId', 'roomId')
-      .take(50)
-      .skip((page - 1) * 50)
-      .getMany();
+    const room = await this.roomRepository.findOne({ where: { Id: roomId }});
+    
+    if(room.approved) {
+      return this.bookingRepository
+        .createQueryBuilder('Bookings')
+        .where('Bookings.roomId = :roomId', { roomId })
+        .leftJoinAndSelect('Bookings.tenantId', 'tenantId')
+        .leftJoinAndSelect('Bookings.roomId', 'roomId')
+        .take(50)
+        .skip((page - 1) * 50)
+        .getMany();
+    }
+
+    throw new BadRequestException({ message: 'this room has not been approved yet' });
   }
 
   async viewBookingReqTenant(tenantId: string, page: number) {
@@ -291,7 +297,12 @@ export class RoomService {
 
     if (roomExists.reserved) {
       throw new BadRequestException({
-        message: 'the room is already reserved',
+        message: 'this room is already reserved',
+      });
+    }
+    if (!roomExists.approved) {
+      throw new BadRequestException({
+        message: 'this room is not yet approved',
       });
     }
     const bookingExists = await this.bookingRepository
@@ -311,7 +322,7 @@ export class RoomService {
 
     if (!roomExists) {
       throw new BadRequestException({
-        message: 'the room you are trying to comment on does not exist',
+        message: 'room does not exist',
       });
     }
 
