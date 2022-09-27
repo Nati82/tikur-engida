@@ -112,6 +112,7 @@ export class RoomService {
       .delete()
       .from(Room)
       .where('Id = :id', { id })
+      .andWhere('reserved = :reserved', { reserved: false })
       .execute();
 
     if (affected && affected > 0) {
