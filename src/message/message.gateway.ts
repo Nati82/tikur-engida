@@ -22,6 +22,7 @@ export class MessageGateway implements OnGatewayInit {
   @UseGuards(JwtAuthGuardMess, SocMessRolesGuard)
   @SubscribeMessage(MessageType.SEND_MESSAGE)
   async sendMessage(_client: any, payload: AddMessageDTO) {
+    console.log('send_message', payload);
     try {
       const message = await this.messageService.addMessage(payload);
       if(message) {
@@ -38,6 +39,7 @@ export class MessageGateway implements OnGatewayInit {
   @UseGuards(JwtAuthGuardMess, SocMessRolesGuard)
   @SubscribeMessage(MessageType.SEND_UPDATE_MESSAGE)
   async updateMessage(_client: any, payload: {messageId: string, message: string}) {
+    console.log('update_message', payload);
     try {
       const { messageId, message } = payload;
       const updateMessage = await this.messageService.updateMessage(messageId, message);
@@ -55,6 +57,7 @@ export class MessageGateway implements OnGatewayInit {
   @UseGuards(JwtAuthGuardMess, SocMessRolesGuard)
   @SubscribeMessage(MessageType.SEND_UPDATE_MESSAGE)
   async markAsSeen(_client: any, payload: {messageIds: string[]}) {
+    console.log('mark_as_seen', payload);
     try {
       const { messageIds } = payload;
       const updateMessage = await this.messageService.markAsSeen(messageIds);
@@ -72,6 +75,7 @@ export class MessageGateway implements OnGatewayInit {
   @UseGuards(JwtAuthGuardMess, SocMessRolesGuard)
   @SubscribeMessage(MessageType.SEND_DELETE_MESSAGE)
   async deleteMessage(_client: any, payload: {messageId: string}) {
+    console.log('delete_message', payload);
     try {
       const { messageId } = payload;
       const deletedMessage = await this.messageService.deleteMessage(messageId);
