@@ -105,7 +105,6 @@ export class RenterController {
   @ApiParam({name: 'renterId'})
   @Delete('deleteRenterAdmin/:renterId')
   async removeRenter(@Param('renterId') renterId: string) {
-    console.log('rene', renterId)
     return this.renterService.deleteRenter(renterId)
   }
 }

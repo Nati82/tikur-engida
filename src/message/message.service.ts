@@ -81,7 +81,6 @@ export class MessageService {
     const message = await this.messageRepository.save(tempMessage);
 
     if (message) {
-      console.log('message', message);
       this.notificationService.addNotification({
         receiverId: message.receiverId,
         type: NotificationType.NEW_MESSAGE,

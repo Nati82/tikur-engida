@@ -109,7 +109,7 @@ export class RoomService {
   async deleteRoom(id: string) {
     const { affected } = await this.roomRepository
       .createQueryBuilder()
-      .delete()
+      .softDelete()
       .from(Room)
       .where('Id = :id', { id })
       .andWhere('reserved = :reserved', { reserved: false })
@@ -331,7 +331,7 @@ export class RoomService {
     const booking = await this.bookingRepository.save(tempBooking);
 
     if (booking) {
-      this.notificationService.addNotification({receiverId: booking.tenantId.Id, type: NotificationType.NEW_REQUEST});
+      await this.notificationService.addNotification({receiverId: booking.tenantId.toString(), type: NotificationType.NEW_REQUEST});
       return booking;
     }
 

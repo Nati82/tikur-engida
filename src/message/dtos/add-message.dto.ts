@@ -12,6 +12,14 @@ export class AddMessageDTO {
 
   @ApiProperty()
   @IsString()
+  senderUsername: string;
+
+  @ApiProperty()
+  @IsString()
+  receiverUsername: string;
+
+  @ApiProperty()
+  @IsString()
   message: string;
 
   @ApiProperty()

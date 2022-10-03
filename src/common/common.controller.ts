@@ -19,9 +19,6 @@ export class CommonController {
   async getImages(@Query('file-path') filePath: string, @Res() res: any) {
     const fPath = filePath.slice(1, filePath.length);
 
-    // const readStream = util.promisify(fs.createReadStream);
-
-    // readStream(`${process.cwd()}${fPath}`, {}).then((v) => console.log('value', v)).catch((e) => console.log('error', e))
     const file = fs.createReadStream(`${process.cwd()}${fPath}`);
     file.pipe(res);
     

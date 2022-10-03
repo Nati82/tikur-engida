@@ -106,7 +106,6 @@ export class RenterService {
   }
 
   async deleteRenter(id: string) {
-    console.log('id', id)
     const { affected } = await this.renterRepository
       .createQueryBuilder()
       .delete()
@@ -115,7 +114,7 @@ export class RenterService {
         id,
       })
       .execute();
-      console.log('affected', affected);
+      
     if (affected && affected > 0) {
       return { message: 'delete successfuly' };
     }

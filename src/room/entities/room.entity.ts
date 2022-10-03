@@ -3,6 +3,7 @@ import { Renter } from 'src/renter/entities/renter.entity';
 import { Tenant } from 'src/tenant/entities/tenat.entity';
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -60,4 +61,7 @@ export class Room {
 
   @Column({type: 'timestamp', default: null})
   to: Date;
+
+  @DeleteDateColumn({nullable: true,  name: 'deleted_at'})
+  delete?: Date;
 }

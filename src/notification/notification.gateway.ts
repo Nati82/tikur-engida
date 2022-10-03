@@ -10,7 +10,7 @@ import { Role } from 'src/common/roles.enum';
 import { NotificationService } from './notification.service';
 import { SocketRolesGuard } from 'src/auth/guards/soc-roles.guard';
 
-@WebSocketGateway(4002, { namespace: 'notification' })
+@WebSocketGateway(4002, {cors: true, namespace: 'notification' })
 export class NotificationGateway implements OnGatewayInit {
   constructor(private notificationService: NotificationService) {}
 

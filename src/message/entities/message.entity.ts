@@ -12,6 +12,12 @@ export class Message {
     receiverId: string;
 
     @Column({type: 'varchar'})
+    senderUsername: string;
+
+    @Column({type: 'varchar'})
+    receiverUsername: string;
+
+    @Column({type: 'varchar'})
     message: string;
 
     @Column({type: 'varchar'})

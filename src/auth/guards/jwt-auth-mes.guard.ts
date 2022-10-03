@@ -11,6 +11,7 @@ export class JwtAuthGuardMess extends AuthGuard(['jwt', 'jwtRenter']) {
 
   getRequest(context: ExecutionContext) {
     const ws = context.switchToWs().getClient(); // possibly `getData()` instead.
+    
     return {
       headers: {
         authorization: `Bearer ${ws.handshake.auth.Bearer}`,

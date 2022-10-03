@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { OnGatewayInit, SubscribeMessage, WebSocketGateway, WsException } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayInit, SubscribeMessage, WebSocketGateway, WsException } from '@nestjs/websockets';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuardMess } from 'src/auth/guards/jwt-auth-mes.guard';
 import { SocMessRolesGuard } from 'src/auth/guards/soc-mess-roles.guard';
@@ -9,8 +9,8 @@ import { UpdateMessageDTO } from './dtos/update-message.dto';
 import { MessageType } from './message.enum';
 import { MessageService } from './message.service';
 
-@WebSocketGateway(4002, {namespace: 'message'})
-export class MessageGateway implements OnGatewayInit{
+@WebSocketGateway(4002, {cors: true, namespace: 'message'})
+export class MessageGateway implements OnGatewayInit {
   constructor(private messageService: MessageService) {}
 
   afterInit(server: any) {
@@ -29,7 +29,6 @@ export class MessageGateway implements OnGatewayInit{
       }
     }
     catch (e) {
-      console.log('e', e);
       throw new WsException({message: 'message not sent'})
     }
   }
@@ -47,7 +46,6 @@ export class MessageGateway implements OnGatewayInit{
       }
     }
     catch (e) {
-      console.log('e', e);
       throw new WsException({message: 'message not sent'})
     }
   }
@@ -65,7 +63,6 @@ export class MessageGateway implements OnGatewayInit{
       }
     }
     catch (e) {
-      console.log('e', e);
       throw new WsException({message: 'message not sent'})
     }
   }
@@ -83,7 +80,6 @@ export class MessageGateway implements OnGatewayInit{
       }
     }
     catch (e) {
-      console.log('e', e);
       throw new WsException({message: 'message not sent'})
     }
   }
