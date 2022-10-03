@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import {
+  OnGatewayConnection,
   OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
@@ -11,12 +12,16 @@ import { NotificationService } from './notification.service';
 import { SocketRolesGuard } from 'src/auth/guards/soc-roles.guard';
 
 @WebSocketGateway(4002, {cors: true, namespace: 'notification' })
-export class NotificationGateway implements OnGatewayInit {
+export class NotificationGateway implements OnGatewayInit, OnGatewayConnection {
   constructor(private notificationService: NotificationService) {}
 
   afterInit(server: any) {
     this.notificationService.socket = server;
     console.log('notification-socket', this.notificationService.socket);
+  }
+
+  handleConnection(client: any, ...args: any[]) {
+      console.log('message_connected', client);
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)

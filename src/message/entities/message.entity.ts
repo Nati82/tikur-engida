@@ -11,10 +11,10 @@ export class Message {
     @Column({type: 'uuid'})
     receiverId: string;
 
-    @Column({type: 'varchar'})
+    @Column({type: 'varchar', default: 'unknown'})
     senderUsername: string;
 
-    @Column({type: 'varchar'})
+    @Column({type: 'varchar', default: 'unknown'})
     receiverUsername: string;
 
     @Column({type: 'varchar'})

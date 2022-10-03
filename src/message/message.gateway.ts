@@ -10,12 +10,16 @@ import { MessageType } from './message.enum';
 import { MessageService } from './message.service';
 
 @WebSocketGateway(4002, {cors: true, namespace: 'message'})
-export class MessageGateway implements OnGatewayInit {
+export class MessageGateway implements OnGatewayInit, OnGatewayConnection {
   constructor(private messageService: MessageService) {}
 
   afterInit(server: any) {
       this.messageService.socket = server;
       console.log('message-socket', this.messageService.socket);
+  }
+
+  handleConnection(client: any, ...args: any[]) {
+      console.log('message_connected', client);
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
