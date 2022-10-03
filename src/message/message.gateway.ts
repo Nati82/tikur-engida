@@ -15,6 +15,7 @@ export class MessageGateway implements OnGatewayInit {
 
   afterInit(server: any) {
       this.messageService.socket = server;
+      console.log('message-socket', this.messageService.socket);
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)

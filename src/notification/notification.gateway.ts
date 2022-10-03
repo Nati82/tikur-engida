@@ -16,6 +16,7 @@ export class NotificationGateway implements OnGatewayInit {
 
   afterInit(server: any) {
     this.notificationService.socket = server;
+    console.log('notification-socket', this.notificationService.socket);
   }
 
   @Roles(Role.ADMIN, Role.RENTER, Role.TENANT)
